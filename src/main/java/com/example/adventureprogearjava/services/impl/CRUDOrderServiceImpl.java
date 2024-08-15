@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,35 +108,11 @@ public class CRUDOrderServiceImpl implements CRUDOrderService {
         Order savedOrder = orderRepository.save(order);
         orderDTO.setId(savedOrder.getId());
         orderDTO.setUserId(user.getId());
-<<<<<<< HEAD
-
-        sendOrderConfirmation(orderDTO, user);
-=======
->>>>>>> dev
 
         sendOrderConfirmation(orderDTO, user.getId());
         return orderDTO;
     }
 
-<<<<<<< HEAD
-    private void sendOrderConfirmation(OrderDTO savedOrderDTO, User user) {
-        Order savedOrder = orderRepository.findById(savedOrderDTO.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id " + savedOrderDTO.getId()));
-
-        String subject = "Order Confirmation - Order # " + savedOrder.getId();
-        StringBuilder message = new StringBuilder();
-        message.append("Thank you for your order!\n")
-                .append("Order Details:\n")
-                .append("Order ID: ").append(savedOrder.getId()).append("\n")
-                .append("Order Date: ").append(savedOrder.getOrderDate()).append("\n")
-                .append("City: ").append(savedOrder.getCity()).append("\n")
-                .append("Post Address: ").append(savedOrder.getPostAddress()).append("\n")
-                .append("Comment: ").append(savedOrder.getComment()).append("\n")
-                .append("Price: ").append(savedOrder.getPrice()).append("\n")
-                .append("Status: ").append(savedOrder.getStatus()).append("\n")
-                .append("\nItems:\n");
-
-=======
     private void sendOrderConfirmation(OrderDTO savedOrderDTO, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
@@ -155,7 +130,6 @@ public class CRUDOrderServiceImpl implements CRUDOrderService {
                 .append("Ми зв'яжемося з вами, як тільки воно буде підтверджено. Ви можете слідкувати за статусом вашого замовлення у своєму особистому кабінеті на нашому сайті.\n\n")
                 .append("З найкращими побажаннями,\n")
                 .append("Команда Adventure Pro Gear\n\n");
->>>>>>> dev
         for (OrdersListDTO item : savedOrderDTO.getOrdersLists()) {
             String productName = productRepository.getProductNameById(item.getProductId());
             message.append("- Product: ").append(productName)
@@ -196,10 +170,7 @@ public class CRUDOrderServiceImpl implements CRUDOrderService {
                     orderDTO.getPostAddress(), orderDTO.getPrice(), orderDTO.getStatus().toString(), orderDTO.getUserId());
         }
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
     @Override
     public void deleteOrder(Long id, User user) {
         log.info("Deleting order with id: {}", id);
