@@ -30,9 +30,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        String method = request.getMethod();
+
+        if ((HttpMethod.POST.matches(method) || HttpMethod.PUT.matches(method) || HttpMethod.DELETE.matches(method))
+                && path.startsWith("/api/public/sections")) {
+            return false;
+        }
+
         return request.getMethod().equals(HttpMethod.GET.name()) &&
-                endpointMaster.isEndpointMatchedWithPattern(request, "/api/productAttributes/**") ||
                 endpointMaster.isEndpointMatchedWithPattern(request, "/api/blog/posts/**") ||
+                endpointMaster.isEndpointMatchedWithPattern(request, "/api/productAttributes/**") ||
                 endpointMaster.isEndpointMatchedWithPattern(request, "/api/blog/reactions/{postId}/count") ||
                 endpointMaster.isEndpointMatchedWithPattern(request, "/api/public/**") ||
                 endpointMaster.isEndpointMatchedWithPattern(request, "/api/v1/products/**");
