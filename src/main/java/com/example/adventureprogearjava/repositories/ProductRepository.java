@@ -22,6 +22,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                        @Param("price") Long price,
                        @Param("gender") String gender,
                        @Param("categoryId") Long categoryId);
+    @Modifying
+    @Query("UPDATE Product p SET p.averageRating = :averageRating WHERE p.id = :productId")
+    void updateAverageRating(@Param("productId") Long productId, @Param("averageRating") Double averageRating);
 
     @Modifying
     @Query(value = "UPDATE products set product_name_en = :nameEn," +
@@ -44,7 +47,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "gender= CAST(:gender as gender) where id = :id",
             nativeQuery = true)
     void updateGender(@Param("id") Long id,
-                @Param("gender") String gender);
+                      @Param("gender") String gender);
 
     @Query(value = "select * from products where starts_with(lower(product_name_en), lower(:name)) or starts_with(lower(product_name_ua), lower(:name))",
             nativeQuery = true)
@@ -67,6 +70,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.gender = CAST(:gender as gender)",
             nativeQuery = true)
     List<Product> findByCategoryAndGender(@Param("category") String category, @Param("gender") String gender);
+    @Query("SELECT p.basePrice FROM Product p WHERE p.id = :productId")
+    Long findProductPriceById(@Param("productId") Long productId);
     List<Product> findByBasePriceBetween(Long from, Long to);
 
     List<Product> findByBasePriceLessThanEqual(Long priceTo);
