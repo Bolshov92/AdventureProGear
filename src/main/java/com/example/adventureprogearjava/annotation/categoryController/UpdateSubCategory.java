@@ -4,6 +4,7 @@ import com.example.adventureprogearjava.dto.SubcategoryDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +30,18 @@ import java.lang.annotation.Target;
         requestBody = @RequestBody(
                 description = "Subcategory data, required for update",
                 required = true,
-                content = @Content(schema = @Schema(implementation = SubcategoryDTO.class))
+                content = @Content(
+                        schema = @Schema(implementation = SubcategoryDTO.class),
+                        examples = {
+                                @ExampleObject(
+                                        name = "Subcategory Example",
+                                        description = "Example of a subcategory update request",
+                                        value = "{\"subcategoryNameUa\": \"Рюкзаки\"," +
+                                                " \"subcategoryNameEn\": \"Backpacks\"," +
+                                                " \"parentCategoryId\": 3}"
+                                )
+                        }
+                )
         ),
         parameters = {
                 @Parameter(

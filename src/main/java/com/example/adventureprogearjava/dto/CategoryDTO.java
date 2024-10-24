@@ -27,7 +27,6 @@ public class CategoryDTO {
 
     @Schema(description = "Section ID to which the category belongs, null if this is a subcategory", example = "2")
     Long sectionId;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     Long parentCategoryId;
 

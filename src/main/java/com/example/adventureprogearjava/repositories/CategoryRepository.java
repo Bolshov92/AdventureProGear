@@ -15,14 +15,14 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO categories (id, category_name_en, category_name_ua) " +
-            "VALUES (nextval('categories_seq'), :nameEn, :nameUa) RETURNING id;", nativeQuery = true)
+            "VALUES (nextval('categories_id_seq'), :nameEn, :nameUa) RETURNING id;", nativeQuery = true)
     Long insertCategory(@Param("nameEn") String nameEn,
                         @Param("nameUa") String nameUa);
 
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO categories (id, category_name_en, category_name_ua, section_id) " +
-            "VALUES (nextval('categories_seq'), :nameEn, :nameUa, :sectionId);", nativeQuery = true)
+            "VALUES (nextval('categories_id_seq'), :nameEn, :nameUa, :sectionId);", nativeQuery = true)
     void insertCategoryWithSection(@Param("nameEn") String nameEn,
                                    @Param("nameUa") String nameUa,
                                    @Param("sectionId") Long sectionId);
@@ -38,7 +38,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO categories (id, category_name_en, category_name_ua, category_id) " +
-            "VALUES (nextval('categories_seq'), :nameEn, :nameUa, :categoryId);", nativeQuery = true)
+            "VALUES (nextval('categories_id_seq'), :nameEn, :nameUa, :categoryId);", nativeQuery = true)
     void insertSubCategory(@Param("nameEn") String nameEn,
                            @Param("nameUa") String nameUa,
                            @Param("categoryId") Long categoryId);
@@ -46,7 +46,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO categories (id, category_name_en, category_name_ua, category_id) " +
-            "VALUES (nextval('categories_seq'), :nameEn, :nameUa, :subCategoryId);", nativeQuery = true)
+            "VALUES (nextval('categories_id_seq'), :nameEn, :nameUa, :subCategoryId);", nativeQuery = true)
     void insertSubSubCategory(@Param("nameEn") String nameEn,
                               @Param("nameUa") String nameUa,
                               @Param("subCategoryId") Long subCategoryId);
