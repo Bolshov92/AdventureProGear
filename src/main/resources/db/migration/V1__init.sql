@@ -68,11 +68,8 @@ CREATE TABLE IF NOT EXISTS public.products_review
     review_date DATE,
     product_id  BIGINT NOT NULL
         CONSTRAINT fk_product
-<<<<<<< HEAD
         REFERENCES public.products(id)ON DELETE CASCADE,
-=======
-        REFERENCES public.products(id),
->>>>>>> upstream/dev
+
     user_id     BIGINT NOT NULL
         CONSTRAINT fk_user
         REFERENCES public.users(id),
