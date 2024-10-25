@@ -4,7 +4,7 @@ SEQUENCE user_seq
 1
     increment 1;
 CREATE
-SEQUENCE categories_id_seq
+SEQUENCE categories_seq
     start
 1
     increment 1;
@@ -115,34 +115,34 @@ WITH section_ids AS (
 INSERT INTO categories (id, category_name_ua, category_name_en, parent_category_id, section_id)
     VALUES
         -- Туризм та Кемпінг
-        (nextval('categories_id_seq'), 'Рюкзаки для туризму', 'Tourism Backpacks', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-        (nextval('categories_id_seq'), 'Спальні мішки', 'Sleeping Bags', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-        (nextval('categories_id_seq'), 'Приготування їжі', 'Cooking Gear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-        (nextval('categories_id_seq'), 'Намети', 'Tents', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+        (nextval('categories_seq'), 'Рюкзаки для туризму', 'Tourism Backpacks', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+        (nextval('categories_seq'), 'Спальні мішки', 'Sleeping Bags', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+        (nextval('categories_seq'), 'Приготування їжі', 'Cooking Gear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+        (nextval('categories_seq'), 'Намети', 'Tents', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
 
         -- Подорожі та місто
-        (nextval('categories_id_seq'), 'Аксесуари для подорожей', 'Travel Accessories', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
-        (nextval('categories_id_seq'), 'Скейтборди', 'Skateboards', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
+        (nextval('categories_seq'), 'Аксесуари для подорожей', 'Travel Accessories', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
+        (nextval('categories_seq'), 'Скейтборди', 'Skateboards', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
 
         -- Скелелазіння | Альпінізм
-        (nextval('categories_id_seq'), 'Спорядження для альпінізму', 'Mountaineering Gear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
-        (nextval('categories_id_seq'), 'Взуття для скелелазіння', 'Climbing Shoes', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
+        (nextval('categories_seq'), 'Спорядження для альпінізму', 'Mountaineering Gear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
+        (nextval('categories_seq'), 'Взуття для скелелазіння', 'Climbing Shoes', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
 
         -- Чоловікам
-        (nextval('categories_id_seq'), 'Чоловічі куртки', 'Men Jackets', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
-        (nextval('categories_id_seq'), 'Чоловічі головні убори', 'Men Headwear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
+        (nextval('categories_seq'), 'Чоловічі куртки', 'Men Jackets', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
+        (nextval('categories_seq'), 'Чоловічі головні убори', 'Men Headwear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
 
         -- Жінкам
-        (nextval('categories_id_seq'), 'Жіночі головні убори', 'Women Headwear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Women Gear')),
+        (nextval('categories_seq'), 'Жіночі головні убори', 'Women Headwear', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Women Gear')),
 
         -- Велоспорт
-        (nextval('categories_id_seq'), 'Велосипеди', 'Bikes', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Cycling')),
+        (nextval('categories_seq'), 'Велосипеди', 'Bikes', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Cycling')),
 
         -- Спортивне харчування
-        (nextval('categories_id_seq'), 'Протеїни', 'Proteins', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Sport Nutrition')),
+        (nextval('categories_seq'), 'Протеїни', 'Proteins', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Sport Nutrition')),
 
         -- Плавання
-        (nextval('categories_id_seq'), 'Пляжні аксесуари', 'Beach Accessories', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Swimming & Diving'))
+        (nextval('categories_seq'), 'Пляжні аксесуари', 'Beach Accessories', NULL, (SELECT id FROM section_ids WHERE sectioncaption_en = 'Swimming & Diving'))
         RETURNING id, category_name_en
 ),
 
@@ -151,34 +151,34 @@ inserted_subcategories AS (
 INSERT INTO categories (id, category_name_ua, category_name_en, parent_category_id, section_id)
 VALUES
     -- СубКатегории для Туризм та Кемпінг
-    (nextval('categories_id_seq'), 'Дитячі рюкзаки для туризму', 'Kids Tourism Backpacks', (SELECT id FROM inserted_categories WHERE category_name_en = 'Tourism Backpacks'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-    (nextval('categories_id_seq'), 'Термоси для походів', 'Hiking Thermos', (SELECT id FROM inserted_categories WHERE category_name_en = 'Sleeping Bags'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-    (nextval('categories_id_seq'), 'Кухонне обладнання для кемпінгу', 'Camping Cooking Equipment', (SELECT id FROM inserted_categories WHERE category_name_en = 'Cooking Gear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-    (nextval('categories_id_seq'), 'Легкі намети', 'Lightweight Tents', (SELECT id FROM inserted_categories WHERE category_name_en = 'Tents'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Дитячі рюкзаки для туризму', 'Kids Tourism Backpacks', (SELECT id FROM inserted_categories WHERE category_name_en = 'Tourism Backpacks'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Термоси для походів', 'Hiking Thermos', (SELECT id FROM inserted_categories WHERE category_name_en = 'Sleeping Bags'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Кухонне обладнання для кемпінгу', 'Camping Cooking Equipment', (SELECT id FROM inserted_categories WHERE category_name_en = 'Cooking Gear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Легкі намети', 'Lightweight Tents', (SELECT id FROM inserted_categories WHERE category_name_en = 'Tents'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
 
     -- СубКатегории для Подорожі та місто
-    (nextval('categories_id_seq'), 'Ручна поклажа', 'Hand Luggage', (SELECT id FROM inserted_categories WHERE category_name_en = 'Travel Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
-    (nextval('categories_id_seq'), 'Аксесуари для скейтбордингу', 'Skateboarding Accessories', (SELECT id FROM inserted_categories WHERE category_name_en = 'Skateboards'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
+    (nextval('categories_seq'), 'Ручна поклажа', 'Hand Luggage', (SELECT id FROM inserted_categories WHERE category_name_en = 'Travel Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
+    (nextval('categories_seq'), 'Аксесуари для скейтбордингу', 'Skateboarding Accessories', (SELECT id FROM inserted_categories WHERE category_name_en = 'Skateboards'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
 
     -- СубКатегории для Скелелазіння | Альпінізм
-    (nextval('categories_id_seq'), 'Мотузки', 'Ropes', (SELECT id FROM inserted_categories WHERE category_name_en = 'Mountaineering Gear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
-    (nextval('categories_id_seq'), 'Альпіністські аксесуари', 'Mountaineering Accessories', (SELECT id FROM inserted_categories WHERE category_name_en = 'Climbing Shoes'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
+    (nextval('categories_seq'), 'Мотузки', 'Ropes', (SELECT id FROM inserted_categories WHERE category_name_en = 'Mountaineering Gear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
+    (nextval('categories_seq'), 'Альпіністські аксесуари', 'Mountaineering Accessories', (SELECT id FROM inserted_categories WHERE category_name_en = 'Climbing Shoes'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
 
     -- СубКатегории для Чоловікам
-    (nextval('categories_id_seq'), 'Теплі куртки для зимових подорожей', 'Warm Jackets for Winter', (SELECT id FROM inserted_categories WHERE category_name_en = 'Men Jackets'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
-    (nextval('categories_id_seq'), 'Шапки для чоловіків', 'Men Hats', (SELECT id FROM inserted_categories WHERE category_name_en = 'Men Headwear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
+    (nextval('categories_seq'), 'Теплі куртки для зимових подорожей', 'Warm Jackets for Winter', (SELECT id FROM inserted_categories WHERE category_name_en = 'Men Jackets'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
+    (nextval('categories_seq'), 'Шапки для чоловіків', 'Men Hats', (SELECT id FROM inserted_categories WHERE category_name_en = 'Men Headwear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
 
     -- СубКатегории для Жінкам
-    (nextval('categories_id_seq'), 'Теплі головні убори', 'Warm Headwear', (SELECT id FROM inserted_categories WHERE category_name_en = 'Women Headwear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Women Gear')),
+    (nextval('categories_seq'), 'Теплі головні убори', 'Warm Headwear', (SELECT id FROM inserted_categories WHERE category_name_en = 'Women Headwear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Women Gear')),
 
     -- СубКатегории для Велоспорт
-    (nextval('categories_id_seq'), 'Аксесуари для велосипедів', 'Bike Accessories', (SELECT id FROM inserted_categories WHERE category_name_en = 'Bikes'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Cycling')),
+    (nextval('categories_seq'), 'Аксесуари для велосипедів', 'Bike Accessories', (SELECT id FROM inserted_categories WHERE category_name_en = 'Bikes'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Cycling')),
 
     -- СубКатегории для Спортивне харчування
-    (nextval('categories_id_seq'), 'Спортивні добавки', 'Sport Supplements', (SELECT id FROM inserted_categories WHERE category_name_en = 'Proteins'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Sport Nutrition')),
+    (nextval('categories_seq'), 'Спортивні добавки', 'Sport Supplements', (SELECT id FROM inserted_categories WHERE category_name_en = 'Proteins'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Sport Nutrition')),
 
     -- СубКатегории для Плавання
-    (nextval('categories_id_seq'), 'Аксесуари для пляжу', 'Beach Accessories Subcategory', (SELECT id FROM inserted_categories WHERE category_name_en = 'Beach Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Swimming & Diving'))
+    (nextval('categories_seq'), 'Аксесуари для пляжу', 'Beach Accessories Subcategory', (SELECT id FROM inserted_categories WHERE category_name_en = 'Beach Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Swimming & Diving'))
     RETURNING id, category_name_en
     )
 
@@ -186,34 +186,34 @@ VALUES
 INSERT INTO categories (id, category_name_ua, category_name_en, parent_category_id, section_id)
 VALUES
     -- Субсубкатегории для Туризм та Кемпінг
-    (nextval('categories_id_seq'), 'Дитячі рюкзаки з термосами', 'Kids Backpacks with Thermos', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Kids Tourism Backpacks'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-    (nextval('categories_id_seq'), 'Міні термоси для походів', 'Mini Hiking Thermos', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Hiking Thermos'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-    (nextval('categories_id_seq'), 'Міні обладнання для кемпінгу', 'Mini Camping Equipment', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Camping Cooking Equipment'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
-    (nextval('categories_id_seq'), 'Компактні легкі намети', 'Compact Lightweight Tents', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Lightweight Tents'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Дитячі рюкзаки з термосами', 'Kids Backpacks with Thermos', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Kids Tourism Backpacks'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Міні термоси для походів', 'Mini Hiking Thermos', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Hiking Thermos'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Міні обладнання для кемпінгу', 'Mini Camping Equipment', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Camping Cooking Equipment'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
+    (nextval('categories_seq'), 'Компактні легкі намети', 'Compact Lightweight Tents', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Lightweight Tents'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Tourism & Camping')),
 
     -- Субсубкатегории для Подорожі та місто
-    (nextval('categories_id_seq'), 'Маленька ручна поклажа', 'Small Hand Luggage', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Hand Luggage'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
-    (nextval('categories_id_seq'), 'Комплект аксесуарів для скейтбордингу', 'Skateboarding Accessories Set', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Skateboarding Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
+    (nextval('categories_seq'), 'Маленька ручна поклажа', 'Small Hand Luggage', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Hand Luggage'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
+    (nextval('categories_seq'), 'Комплект аксесуарів для скейтбордингу', 'Skateboarding Accessories Set', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Skateboarding Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Travel & City')),
 
     -- Субсубкатегории для Скелелазіння | Альпінізм
-    (nextval('categories_id_seq'), 'Міцні мотузки', 'Durable Ropes', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Ropes'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
-    (nextval('categories_id_seq'), 'Набір альпіністських аксесуарів', 'Mountaineering Accessories Kit', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Mountaineering Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
+    (nextval('categories_seq'), 'Міцні мотузки', 'Durable Ropes', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Ropes'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
+    (nextval('categories_seq'), 'Набір альпіністських аксесуарів', 'Mountaineering Accessories Kit', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Mountaineering Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Climbing & Mountaineering')),
 
     -- Субсубкатегории для Чоловікам
-    (nextval('categories_id_seq'), 'Утеплені зимові куртки', 'Insulated Winter Jackets', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Warm Jackets for Winter'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
-    (nextval('categories_id_seq'), 'Шапки з утепленням', 'Insulated Men Hats', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Men Hats'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
+    (nextval('categories_seq'), 'Утеплені зимові куртки', 'Insulated Winter Jackets', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Warm Jackets for Winter'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
+    (nextval('categories_seq'), 'Шапки з утепленням', 'Insulated Men Hats', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Men Hats'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Men Gear')),
 
     -- Субсубкатегории для Жінкам
-    (nextval('categories_id_seq'), 'Модні теплі головні убори', 'Stylish Warm Headwear', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Warm Headwear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Women Gear')),
+    (nextval('categories_seq'), 'Модні теплі головні убори', 'Stylish Warm Headwear', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Warm Headwear'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Women Gear')),
 
     -- Субсубкатегории для Велоспорт
-    (nextval('categories_id_seq'), 'Комплект аксесуарів для велосипеда', 'Bike Accessories Kit', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Bike Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Cycling')),
+    (nextval('categories_seq'), 'Комплект аксесуарів для велосипеда', 'Bike Accessories Kit', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Bike Accessories'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Cycling')),
 
     -- Субсубкатегории для Спортивне харчування
-    (nextval('categories_id_seq'), 'Набір спортивних добавок', 'Sport Supplements Kit', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Sport Supplements'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Sport Nutrition')),
+    (nextval('categories_seq'), 'Набір спортивних добавок', 'Sport Supplements Kit', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Sport Supplements'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Sport Nutrition')),
 
     -- Субсубкатегории для Плавання
-    (nextval('categories_id_seq'), 'Комплект пляжних аксесуарів', 'Beach Accessories Set', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Beach Accessories Subcategory'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Swimming & Diving'));
+    (nextval('categories_seq'), 'Комплект пляжних аксесуарів', 'Beach Accessories Set', (SELECT id FROM inserted_subcategories WHERE category_name_en = 'Beach Accessories Subcategory'), (SELECT id FROM section_ids WHERE sectioncaption_en = 'Swimming & Diving'));
 
 
 WITH category_ids AS (

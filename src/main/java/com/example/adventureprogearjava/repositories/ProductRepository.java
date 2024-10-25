@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "insert into products (id, product_name_en, product_name_ua, description_en, description_ua, base_price, gender, category) " +
-            "values (nextval('product_content_seq'), :nameEn, :nameUa, :descriptionEn, :descriptionUa, :price, CAST(:gender as gender), :categoryId) RETURNING id;",
+            "values (nextval('product_seq'), :nameEn, :nameUa, :descriptionEn, :descriptionUa, :price, CAST(:gender as gender), :categoryId) RETURNING id;",
             nativeQuery = true)
     Long insertProduct(@Param("nameEn") String nameEn,
                        @Param("nameUa") String nameUa,
