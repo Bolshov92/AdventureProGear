@@ -11,6 +11,7 @@ public interface ProductAttributeMapper {
     String api = "https://empowering-happiness-production.up.railway.app/api/v1/productAttributes/";
 
     @Mapping(target = "selfLink", source = "productAttribute.id", qualifiedByName = "idToLink")
+    @Mapping(target = "productId", source = "product.id")
     ProductAttributeDTO toDto(ProductAttribute productAttribute);
 
     ProductAttribute toEntity(ProductAttributeDTO dto);
