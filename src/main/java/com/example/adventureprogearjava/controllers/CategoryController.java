@@ -7,6 +7,7 @@ import com.example.adventureprogearjava.dto.SubcategoryDTO;
 import com.example.adventureprogearjava.services.CRUDService;
 import com.example.adventureprogearjava.services.CategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -58,13 +59,18 @@ public class CategoryController {
     }
 
     @CreateCategory(path = "")
-    public ResponseEntity<Object> createCategory(@RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<Object> createCategory(@RequestBody @Valid CategoryDTO categoryDTO) {
         try {
-            Long sectionId = categoryDTO.getSectionId();
-            CategoryDTO createdCategory = categoryService.createCategoryWithSection(sectionId, categoryDTO);
+            if (categoryDTO.getParentCategoryId() == null) {
+                categoryDTO.setParentCategoryId(null);
+            }
+
+            if (categoryDTO.getSectionId() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Section ID is required");
+            }
+
+            CategoryDTO createdCategory = categoryService.createCategoryWithSection(categoryDTO.getSectionId(), categoryDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Section ID is required");
         } catch (DataIntegrityViolationException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Category with this name already exists.");
         }

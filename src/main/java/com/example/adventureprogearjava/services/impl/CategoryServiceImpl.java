@@ -109,52 +109,63 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DataIntegrityViolationException("Category with name '" + categoryDTO.getCategoryNameUa() + "' already exists.");
         }
 
-        Category category = Category.builder()
-                .categoryNameEn(categoryDTO.getCategoryNameEn())
-                .categoryNameUa(categoryDTO.getCategoryNameUa())
-                .section(sectionRepository.findById(sectionId).orElseThrow())
-                .build();
+        categoryRepository.insertCategoryWithSection(
+                categoryDTO.getCategoryNameEn(),
+                categoryDTO.getCategoryNameUa(),
+                sectionId
+        );
 
-        categoryRepository.save(category);
+        Category newCategory = categoryRepository.findByCategoryNameUa(categoryDTO.getCategoryNameUa())
+                .orElseThrow(() -> new ResourceNotFoundException("Failed to create the category"));
 
-        return mapper.toDTO(category);
+        return mapper.toDTO(newCategory);
     }
 
     @Transactional
-    @Override
-    public SubcategoryDTO createSubcategory(Long parentCategoryId, SubcategoryDTO categoryDTO) {
+    public SubcategoryDTO createSubcategory(Long parentCategoryId, SubcategoryDTO subcategoryDTO) {
         Category parentCategory = categoryRepository.findById(parentCategoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot find parent category with id: " + parentCategoryId));
+                .orElseThrow(() -> new ResourceNotFoundException("Parent category not found with ID: " + parentCategoryId));
 
-        Category subCategory = Category.builder()
-                .categoryNameEn(categoryDTO.getSubcategoryNameEn())
-                .categoryNameUa(categoryDTO.getSubcategoryNameUa())
-                .parentCategory(parentCategory)
-                .section(parentCategory.getSection())
-                .build();
+        if (categoryRepository.findByCategoryNameUa(subcategoryDTO.getSubcategoryNameUa()).isPresent()) {
+            throw new DataIntegrityViolationException("Subcategory with this name already exists.");
+        }
+        categoryRepository.insertSubCategory(
+                subcategoryDTO.getSubcategoryNameEn(),
+                subcategoryDTO.getSubcategoryNameUa(),
+                parentCategoryId,
+                parentCategory.getSection().getId()
+        );
 
-        categoryRepository.save(subCategory);
+        Category newSubcategory = categoryRepository.findByCategoryNameUa(subcategoryDTO.getSubcategoryNameUa())
+                .orElseThrow(() -> new ResourceNotFoundException("Failed to create the subcategory"));
 
-        return mapper.toDTOFromCategory(subCategory);
+        return mapper.toDTOFromCategory(newSubcategory);
     }
 
+
     @Transactional
-    @Override
     public SubSubCategoryDTO createSubSubCategory(Long subcategoryId, SubSubCategoryDTO subSubCategoryDTO) {
-        Category subCategory = categoryRepository.findById(subcategoryId)
+        Category parentSubCategory = categoryRepository.findById(subcategoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Subcategory not found with ID: " + subcategoryId));
 
-        Category subSubCategory = Category.builder()
-                .categoryNameEn(subSubCategoryDTO.getSubSubCategoryNameEn())
-                .categoryNameUa(subSubCategoryDTO.getSubSubCategoryNameUa())
-                .parentCategory(subCategory)
-                .section(subCategory.getSection())
-                .build();
+        if (categoryRepository.findByCategoryNameUa(subSubCategoryDTO.getSubSubCategoryNameUa()).isPresent()) {
+            throw new DataIntegrityViolationException("SubSubcategory with this name already exists.");
+        }
 
-        categoryRepository.save(subSubCategory);
+        categoryRepository.insertSubSubCategory(
+                subSubCategoryDTO.getSubSubCategoryNameEn(),
+                subSubCategoryDTO.getSubSubCategoryNameUa(),
+                subcategoryId,
+                parentSubCategory.getSection().getId()
+        );
 
-        return mapper.toSubSubCategoryDTO(subSubCategory);
+        Category newSubSubCategory = categoryRepository.findByCategoryNameUa(subSubCategoryDTO.getSubSubCategoryNameUa())
+                .orElseThrow(() -> new ResourceNotFoundException("Failed to create the sub-subcategory"));
+
+        return mapper.toSubSubCategoryDTO(newSubSubCategory);
     }
+
+
 
     @Transactional
     @Override
@@ -169,6 +180,14 @@ public class CategoryServiceImpl implements CategoryService {
             subcategory.setCategoryNameUa(subcategoryDTO.getSubcategoryNameUa());
         }
 
+        if (subcategoryDTO.getParentCategoryId() != null) {
+            Category parentCategory = categoryRepository.findById(subcategoryDTO.getParentCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Parent category not found with ID: " + subcategoryDTO.getParentCategoryId()));
+            subcategory.setParentCategory(parentCategory);
+        } else {
+            subcategory.setParentCategory(null);
+        }
+
         categoryRepository.save(subcategory);
         return mapper.toDTOFromCategory(subcategory);
     }
@@ -176,14 +195,26 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public SubSubCategoryDTO updateSubSubcategory(Long id, SubSubCategoryDTO subSubCategoryDTO) {
+
         Category subSubcategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sub-subcategory not found with ID: " + id));
+
 
         if (subSubCategoryDTO.getSubSubCategoryNameEn() != null) {
             subSubcategory.setCategoryNameEn(subSubCategoryDTO.getSubSubCategoryNameEn());
         }
         if (subSubCategoryDTO.getSubSubCategoryNameUa() != null) {
             subSubcategory.setCategoryNameUa(subSubCategoryDTO.getSubSubCategoryNameUa());
+        }
+
+
+        if (subSubCategoryDTO.getSubCategoryId() != null) {
+            Category parentCategory = categoryRepository.findById(subSubCategoryDTO.getSubCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Parent category not found with ID: " + subSubCategoryDTO.getSubCategoryId()));
+            subSubcategory.setParentCategory(parentCategory);
+        } else {
+
+            subSubcategory.setParentCategory(null);
         }
 
         categoryRepository.save(subSubcategory);

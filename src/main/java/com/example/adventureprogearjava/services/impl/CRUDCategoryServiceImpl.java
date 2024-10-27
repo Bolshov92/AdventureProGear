@@ -4,6 +4,7 @@ import com.example.adventureprogearjava.dto.CategoryDTO;
 import com.example.adventureprogearjava.dto.SubSubCategoryDTO;
 import com.example.adventureprogearjava.dto.SubcategoryDTO;
 import com.example.adventureprogearjava.entity.Category;
+import com.example.adventureprogearjava.entity.Section;
 import com.example.adventureprogearjava.exceptions.NoContentException;
 import com.example.adventureprogearjava.exceptions.ResourceNotFoundException;
 import com.example.adventureprogearjava.mapper.CategoryMapper;
@@ -109,6 +110,12 @@ public class CRUDCategoryServiceImpl implements CRUDService<CategoryDTO> {
 
         category.setCategoryNameEn(categoryDTO.getCategoryNameEn());
         category.setCategoryNameUa(categoryDTO.getCategoryNameUa());
+
+        if (categoryDTO.getSectionId() != null) {
+            Section section = sectionRepository.findById(categoryDTO.getSectionId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Section not found"));
+            category.setSection(section);
+        }
 
         if (categoryDTO.getParentCategoryId() != null) {
             Category parentCategory = categoryRepository.findById(categoryDTO.getParentCategoryId())

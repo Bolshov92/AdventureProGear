@@ -1,5 +1,5 @@
 CREATE
-TYPE gender AS ENUM ('MALE','FEMALE');
+TYPE gender AS ENUM ('MALE','FEMALE','UNISEX');
 
 CREATE
 TYPE status AS ENUM ('NEW', 'PAID','DELIVERED','CANCELED');
@@ -23,7 +23,7 @@ alter table sections
 
 CREATE TABLE IF NOT EXISTS public.categories
 (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     category_name_ua   VARCHAR NOT NULL UNIQUE,
     category_name_en   VARCHAR NOT NULL UNIQUE,
     parent_category_id BIGINT
@@ -68,7 +68,8 @@ CREATE TABLE IF NOT EXISTS public.products_review
     review_date DATE,
     product_id  BIGINT NOT NULL
         CONSTRAINT fk_product
-        REFERENCES public.products(id),
+        REFERENCES public.products(id)ON DELETE CASCADE,
+
     user_id     BIGINT NOT NULL
         CONSTRAINT fk_user
         REFERENCES public.users(id),
@@ -92,8 +93,8 @@ CREATE TABLE IF NOT EXISTS public.review_reactions
     user_id       BIGINT  NOT NULL,
     review_id     BIGINT  NOT NULL,
     reaction_type VARCHAR NOT NULL CHECK (reaction_type IN ('LIKE', 'DISLIKE')),
-    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES public.users (id),
-    CONSTRAINT fk_review FOREIGN KEY (review_id) REFERENCES public.products_review (id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES public.users (id) ON DELETE CASCADE,
+    CONSTRAINT fk_review FOREIGN KEY (review_id) REFERENCES public.products_review (id) ON DELETE CASCADE,
     CONSTRAINT unique_user_review UNIQUE (user_id, review_id)
 );
 
