@@ -40,4 +40,7 @@ public interface ProductAttributeRepository extends JpaRepository<ProductAttribu
     @Query(value = "DELETE FROM product_attributes WHERE id =:id",
             nativeQuery = true)
     void deleteById(@Param("id") Long id);
+
+    ProductAttribute findTopByOrderByIdDesc();
+
 }
