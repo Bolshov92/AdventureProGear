@@ -62,7 +62,9 @@ public class CRUDProductAttributeServiceImpl implements CRUDService<ProductAttri
                 productAttributeDTO.getLabel(),
                 productAttributeDTO.getPictureUrl()
         );
-        return productAttributeDTO;
+
+        ProductAttribute createdProductAttribute = productAttributeRepo.findTopByOrderByIdDesc();
+        return productAttributeMapper.toDto(createdProductAttribute);
     }
 
     @Override
