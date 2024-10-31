@@ -10,7 +10,7 @@ TYPE user_role AS ENUM ('USER', 'ADMIN');
 -- CREATE TYPE category AS ENUM ('T_SHIRTS','PANTS', 'LINEN', 'HEADWEARS', 'HIKING_EQUIPMENT', 'BAGS', 'SHOES' );
 CREATE TABLE IF NOT EXISTS sections
 (
-    id                BIGINT PRIMARY KEY ,
+    id                BIGINT PRIMARY KEY,
     sectioncaption_en VARCHAR NOT NULL,
     sectioncaption_ua VARCHAR NOT NULL,
     sectionicon       VARCHAR
@@ -68,10 +68,7 @@ CREATE TABLE IF NOT EXISTS public.products_review
     review_date DATE,
     product_id  BIGINT NOT NULL
         CONSTRAINT fk_product
-
         REFERENCES public.products(id) ON DELETE CASCADE,
-
-
     user_id     BIGINT NOT NULL
         CONSTRAINT fk_user
         REFERENCES public.users(id),
