@@ -99,9 +99,7 @@ VALUES (nextval('sections_seq'), 'Tourism & Camping', 'Туризм та Кем�
 
 INSERT INTO users (id, name, surname, email, phone_number, registration_date, role, verified, password,
                    verification_token)
-VALUES (nextval('user_seq'), 'Danylo', 'Berkovskyi', 'serhio3347@gmail.com', '+380980648928', '2024-10-27', 'ADMIN',
-        true, 'Password1@', '5bd33686-6f36-461d-9047-283d4d3be783'),
-       (nextval('user_seq'), 'Сергій', 'Михайлович', 'pesis37115@segichen.com', NULL, '2024-10-27', 'ADMIN', true,
+VALUES (nextval('user_seq'), 'Сергій', 'Михайлович', 'pesis37115@segichen.com', NULL, '2024-10-27', 'ADMIN', true,
         '$2a$10$i5mGPw4yph1.q4XwZtcYbeNgn76py1Prm8hFUduD9lMJ3KQlEWwyy', '5bd33686-6f36-461d-9047-283d4d3be783'),
        (nextval('user_seq'), 'Slava', 'Bolshov', 'bolshov92@gmail.com', NULL, '2024-10-27', 'ADMIN', true,
         '$2a$10$i.njMgZr0x8jUlzIlCl3O.IikSIlORHqKIok15SxIGqtXgkHsjbEe', 'e82cde0a-08f5-4d34-b378-2e7a1bf36358'),
