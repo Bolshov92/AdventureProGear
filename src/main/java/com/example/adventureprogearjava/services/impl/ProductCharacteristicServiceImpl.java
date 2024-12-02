@@ -1,8 +1,10 @@
 package com.example.adventureprogearjava.services.impl;
 
 import com.example.adventureprogearjava.dto.ProductCharacteristicDTO;
+import com.example.adventureprogearjava.entity.CategoryCharacteristic;
 import com.example.adventureprogearjava.entity.ProductCharacteristic;
 import com.example.adventureprogearjava.repositories.ProductCharacteristicRepository;
+import com.example.adventureprogearjava.repositories.CategoryCharacteristicRepository;
 import com.example.adventureprogearjava.services.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,20 +17,27 @@ import java.util.stream.Collectors;
 public class ProductCharacteristicServiceImpl implements CRUDService<ProductCharacteristicDTO> {
 
     private final ProductCharacteristicRepository repository;
+    private final CategoryCharacteristicRepository categoryCharacteristicRepository;
 
     private ProductCharacteristicDTO convertToDTO(ProductCharacteristic characteristic) {
         return new ProductCharacteristicDTO(
                 characteristic.getId(),
-                characteristic.getName(),
-                characteristic.getDataType(),
-                characteristic.getProduct().getId()
+                characteristic.getCategoryCharacteristic().getName(),
+                characteristic.getValue(),
+                characteristic.getProduct().getId(),
+                characteristic.getCategoryCharacteristic().getId()
+
         );
     }
 
     private ProductCharacteristic convertToEntity(ProductCharacteristicDTO characteristicDTO) {
         ProductCharacteristic characteristic = new ProductCharacteristic();
-        characteristic.setName(characteristicDTO.getName());
-        characteristic.setDataType(characteristicDTO.getDataType());
+        characteristic.setValue(characteristicDTO.getValue());
+
+        CategoryCharacteristic categoryCharacteristic = categoryCharacteristicRepository.findById(characteristicDTO.getId())
+                .orElseThrow(() -> new RuntimeException("CategoryCharacteristic not found"));
+        characteristic.setCategoryCharacteristic(categoryCharacteristic);
+
         return characteristic;
     }
 
@@ -57,8 +66,12 @@ public class ProductCharacteristicServiceImpl implements CRUDService<ProductChar
     public void update(ProductCharacteristicDTO characteristicDTO, Long id) {
         ProductCharacteristic existingCharacteristic = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ProductCharacteristic not found"));
-        existingCharacteristic.setName(characteristicDTO.getName());
-        existingCharacteristic.setDataType(characteristicDTO.getDataType());
+        existingCharacteristic.setValue(characteristicDTO.getValue());
+
+        CategoryCharacteristic categoryCharacteristic = categoryCharacteristicRepository.findById(characteristicDTO.getId())
+                .orElseThrow(() -> new RuntimeException("CategoryCharacteristic not found"));
+        existingCharacteristic.setCategoryCharacteristic(categoryCharacteristic);
+
         repository.save(existingCharacteristic);
     }
 

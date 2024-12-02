@@ -1,5 +1,6 @@
 package com.example.adventureprogearjava.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,14 +18,12 @@ public class ProductCharacteristic {
     @SequenceGenerator(name = "product_characteristics_seq", sequenceName = "product_characteristics_seq", allocationSize = 1)
     Long id;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "data_type")
-    private String dataType;
+    @Column(name = "value")
+    private String value;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
+    @JsonBackReference
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)

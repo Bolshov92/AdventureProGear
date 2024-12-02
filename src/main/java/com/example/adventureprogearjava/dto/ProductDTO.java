@@ -35,6 +35,7 @@ public class ProductDTO {
 
     @NotNull(message = "Category ID is required")
     CategoryDTO category;
+    List<ProductCharacteristicDTO> characteristics;
 
     List<ProductAttributeDTO> attributes;
 

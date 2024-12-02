@@ -1,17 +1,25 @@
 package com.example.adventureprogearjava.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class ProductCharacteristicDTO {
 
     private Long id;
     private String name;
-    private String dataType;
+    private String value;
     private Long productId;
+    private Long categoryCharacteristicId;
+
+
+    public ProductCharacteristicDTO(Long id,String name, String value, Long productId, Long categoryCharacteristicId) {
+        this.id = id;
+        this.name = name;
+        this.value = value;
+        this.productId = productId;
+        this.categoryCharacteristicId = categoryCharacteristicId;
+
+    }
 
 }
