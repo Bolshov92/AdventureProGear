@@ -82,4 +82,33 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT p.descriptionEn FROM Product p WHERE p.id = :productId")
     String getProductNameById(@Param("productId") Long productId);
+
+    @Query(value = """
+    SELECT p.* 
+    FROM products p 
+    JOIN categories c ON c.id = p.category 
+    WHERE 
+        (:categoryId IS NULL OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
+         EXISTS (
+            SELECT 1 
+            FROM categories sc 
+            WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
+        )) AND
+        (:subcategoryId IS NULL OR c.id = :subcategoryId OR 
+         EXISTS (
+            SELECT 1 
+            FROM categories sc
+            WHERE sc.id = :subcategoryId AND sc.parent_category_id = c.id
+        )) AND
+        (:priceFrom IS NULL OR p.base_price >= :priceFrom) AND
+        (:priceTo IS NULL OR p.base_price <= :priceTo) AND
+        (:gender IS NULL OR p.gender = CAST(:gender AS gender))
+""", nativeQuery = true)
+    List<Product> findByFilters(
+            @Param("categoryId") Long categoryId,
+            @Param("subcategoryId") Long subcategoryId,
+            @Param("priceFrom") Long priceFrom,
+            @Param("priceTo") Long priceTo,
+            @Param("gender") String gender);
+
 }

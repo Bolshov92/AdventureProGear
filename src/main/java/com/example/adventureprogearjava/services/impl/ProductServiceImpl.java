@@ -1,8 +1,11 @@
 package com.example.adventureprogearjava.services.impl;
 
 import com.example.adventureprogearjava.dto.ProductDTO;
+import com.example.adventureprogearjava.entity.Category;
+import com.example.adventureprogearjava.entity.Product;
 import com.example.adventureprogearjava.entity.enums.Gender;
 import com.example.adventureprogearjava.mapper.ProductMapper;
+import com.example.adventureprogearjava.repositories.CategoryRepository;
 import com.example.adventureprogearjava.repositories.ProductRepository;
 import com.example.adventureprogearjava.services.CRUDService;
 import com.example.adventureprogearjava.services.ProductService;
@@ -13,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     CRUDService<ProductDTO> productCRUDService;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public List<ProductDTO> getProductsByName(String productName) {
@@ -121,6 +131,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(mapper::toDto)
                 .toList();
     }
+
     @Override
     public List<ProductDTO> getAllProducts(String gender, String category, Long priceFrom, Long priceTo) {
         log.info("Getting all products with filters");
@@ -151,4 +162,46 @@ public class ProductServiceImpl implements ProductService {
 
         return productCRUDService.getAll();
     }
+
+    @Override
+    public List<ProductDTO> getProductsByAdvancedFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender) {
+        if (categoryId != null && !isValidNumber(categoryId)) {
+            throw new IllegalArgumentException("Invalid categoryId: must be a number");
+        }
+        if (subcategoryId != null && !isValidNumber(subcategoryId)) {
+            throw new IllegalArgumentException("Invalid subcategoryId: must be a number");
+        }
+        if (priceFrom != null && !isValidNumber(priceFrom)) {
+            throw new IllegalArgumentException("Invalid priceFrom: must be a number");
+        }
+        if (priceTo != null && !isValidNumber(priceTo)) {
+            throw new IllegalArgumentException("Invalid priceTo: must be a number");
+        }
+
+        if (priceFrom != null && priceFrom < 0) {
+            throw new IllegalArgumentException("PriceFrom must be a positive value");
+        }
+        if (priceTo != null && priceTo < 0) {
+            throw new IllegalArgumentException("PriceTo must be a positive value");
+        }
+        if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
+            throw new IllegalArgumentException("PriceFrom cannot be greater than PriceTo");
+        }
+
+        if (gender != null) {
+            try {
+                Gender.valueOf(gender.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid gender value: " + gender + ". Allowed values: " + Arrays.toString(Gender.values()));
+            }
+        }
+
+        List<Product> products = productRepository.findByFilters(categoryId, subcategoryId, priceFrom, priceTo, gender);
+        return products.stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    private boolean isValidNumber(Long value) {
+        return value != null && value >= 0;
+    }
+
 }
