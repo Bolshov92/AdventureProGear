@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Tag(name = "Product Controller",
         description = "API operations for the product catalog")
+@Slf4j
 public class ProductController {
     CRUDService<ProductDTO> productCRUDService;
 
@@ -56,5 +58,18 @@ public class ProductController {
     @DeleteProduct(path = "/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productCRUDService.delete(id);
+    }
+
+    @GetProductsByFilters(path = "/filter")
+    public List<ProductDTO> getProductsByFilters(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long subcategoryId,
+            @RequestParam(required = false) Long priceFrom,
+            @RequestParam(required = false) Long priceTo,
+            @RequestParam(required = false) String gender) {
+
+
+        return productService.getProductsByAdvancedFilters(categoryId, subcategoryId,
+                priceFrom, priceTo, gender);
     }
 }
