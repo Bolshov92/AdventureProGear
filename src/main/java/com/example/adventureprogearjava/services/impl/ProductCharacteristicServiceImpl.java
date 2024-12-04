@@ -2,9 +2,11 @@ package com.example.adventureprogearjava.services.impl;
 
 import com.example.adventureprogearjava.dto.ProductCharacteristicDTO;
 import com.example.adventureprogearjava.entity.CategoryCharacteristic;
+import com.example.adventureprogearjava.entity.Product;
 import com.example.adventureprogearjava.entity.ProductCharacteristic;
 import com.example.adventureprogearjava.repositories.ProductCharacteristicRepository;
 import com.example.adventureprogearjava.repositories.CategoryCharacteristicRepository;
+import com.example.adventureprogearjava.repositories.ProductRepository;
 import com.example.adventureprogearjava.services.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class ProductCharacteristicServiceImpl implements CRUDService<ProductChar
 
     private final ProductCharacteristicRepository repository;
     private final CategoryCharacteristicRepository categoryCharacteristicRepository;
+    private final ProductRepository productRepository;
 
     private ProductCharacteristicDTO convertToDTO(ProductCharacteristic characteristic) {
         return new ProductCharacteristicDTO(
@@ -48,6 +51,14 @@ public class ProductCharacteristicServiceImpl implements CRUDService<ProductChar
                 .collect(Collectors.toList());
     }
 
+    public List<ProductCharacteristicDTO> getCharacteristicsByProductName(String productName) {
+        Product product = productRepository.findByNameEnOrNameUa(productName)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        return product.getProductCharacteristics().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
     @Override
     public ProductCharacteristicDTO getById(Long id) {
         ProductCharacteristic characteristic = repository.findById(id)

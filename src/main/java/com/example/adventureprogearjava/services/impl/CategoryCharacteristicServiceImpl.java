@@ -1,8 +1,10 @@
 package com.example.adventureprogearjava.services.impl;
 
 import com.example.adventureprogearjava.dto.CategoryCharacteristicDTO;
+import com.example.adventureprogearjava.entity.Category;
 import com.example.adventureprogearjava.entity.CategoryCharacteristic;
 import com.example.adventureprogearjava.repositories.CategoryCharacteristicRepository;
+import com.example.adventureprogearjava.repositories.CategoryRepository;
 import com.example.adventureprogearjava.services.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
 @RequiredArgsConstructor
 public class CategoryCharacteristicServiceImpl implements CRUDService<CategoryCharacteristicDTO> {
 
     private final CategoryCharacteristicRepository repository;
+    private final CategoryRepository categoryRepository;
 
 
     private CategoryCharacteristicDTO convertToDTO(CategoryCharacteristic characteristic) {
@@ -24,6 +28,15 @@ public class CategoryCharacteristicServiceImpl implements CRUDService<CategoryCh
                 characteristic.getDataType(),
                 characteristic.getCategory().getId()
         );
+    }
+
+    public List<CategoryCharacteristicDTO> getCharacteristicsByCategoryName(String categoryName) {
+        Category category = (Category) categoryRepository.findByCategoryNameEnOrCategoryNameUa(categoryName, categoryName)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        return category.getCharacteristics().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

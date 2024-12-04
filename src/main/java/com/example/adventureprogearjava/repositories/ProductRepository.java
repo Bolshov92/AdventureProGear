@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
@@ -43,7 +44,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 @Param("category") Long categoryId);
 
     @Modifying
-    @Query(value = "UPDATE products set "+
+    @Query(value = "UPDATE products set " +
             "gender= CAST(:gender as gender) where id = :id",
             nativeQuery = true)
     void updateGender(@Param("id") Long id,
@@ -82,31 +83,37 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     String getProductNameById(@Param("productId") Long productId);
 
     @Query(value = """
-    SELECT p.* 
-    FROM products p 
-    JOIN categories c ON c.id = p.category 
-    WHERE 
-        (:categoryId IS NULL OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
-         EXISTS (
-            SELECT 1 
-            FROM categories sc 
-            WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
-        )) AND
-        (:subcategoryId IS NULL OR c.id = :subcategoryId OR 
-         EXISTS (
-            SELECT 1 
-            FROM categories sc
-            WHERE sc.id = :subcategoryId AND sc.parent_category_id = c.id
-        )) AND
-        (:priceFrom IS NULL OR p.base_price >= :priceFrom) AND
-        (:priceTo IS NULL OR p.base_price <= :priceTo) AND
-        (:gender IS NULL OR p.gender = CAST(:gender AS gender))
-""", nativeQuery = true)
+                SELECT p.* 
+                FROM products p 
+                JOIN categories c ON c.id = p.category 
+                WHERE 
+                    (:categoryId IS NULL OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
+                     EXISTS (
+                        SELECT 1 
+                        FROM categories sc 
+                        WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
+                    )) AND
+                    (:subcategoryId IS NULL OR c.id = :subcategoryId OR 
+                     EXISTS (
+                        SELECT 1 
+                        FROM categories sc
+                        WHERE sc.id = :subcategoryId AND sc.parent_category_id = c.id
+                    )) AND
+                    (:priceFrom IS NULL OR p.base_price >= :priceFrom) AND
+                    (:priceTo IS NULL OR p.base_price <= :priceTo) AND
+                    (:gender IS NULL OR p.gender = CAST(:gender AS gender))
+            """, nativeQuery = true)
     List<Product> findByFilters(
             @Param("categoryId") Long categoryId,
             @Param("subcategoryId") Long subcategoryId,
             @Param("priceFrom") Long priceFrom,
             @Param("priceTo") Long priceTo,
             @Param("gender") String gender);
+
+
+    @Query(value = "SELECT * FROM products WHERE " +
+            "(LOWER(product_name_en) = LOWER(:name) OR LOWER(product_name_ua) = LOWER(:name))",
+            nativeQuery = true)
+    Optional<Product> findByNameEnOrNameUa(@Param("name") String name);
 
 }
