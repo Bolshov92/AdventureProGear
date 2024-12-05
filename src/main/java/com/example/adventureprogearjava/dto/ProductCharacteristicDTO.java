@@ -1,11 +1,12 @@
 package com.example.adventureprogearjava.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Data
 @NoArgsConstructor
 public class ProductCharacteristicDTO {
-
+@JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
     private String name;
     private String value;

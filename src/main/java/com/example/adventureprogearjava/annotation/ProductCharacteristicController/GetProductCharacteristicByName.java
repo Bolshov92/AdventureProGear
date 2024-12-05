@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping(method = RequestMethod.GET)
 @Operation(
-        summary = "Get product characteristics by name",
+        summary = "Get product characteristics by Product name",
         description = "Retrieves all product characteristics for the given product name. " +
                 "If no characteristics are found with the provided name, the service returns an empty list.",
         parameters = @Parameter(

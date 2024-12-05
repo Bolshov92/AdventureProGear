@@ -42,38 +42,11 @@ import java.lang.annotation.Target;
                                 @ExampleObject(
                                         name = "Good request",
                                         value = """
-                                                [
-                                                    {
-                                                     
-                                                        "value": "Рюкзак для походів",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 1
-                                                    },
-                                                    {
-                                                       
-                                                        "value": "Поліестер 600D",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 2
-                                                    },
-                                                    {
-                                                      
-                                                        "value": "1.2 кг",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 3
-                                                    },
-                                                    {
-                                                       
-                                                        "value": "45 літрів",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 4
-                                                    },
-                                                    {
-                                                       
-                                                        "value": "Універсальний (всі сезони)",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 5
-                                                    }
-                                                ]
+                                                 {
+                                                   "value": "Рюкзак для походів",
+                                                   "productId": 142,
+                                                   "categoryCharacteristicId": 38
+                                                 }
                                                 """
                                 )
                         }

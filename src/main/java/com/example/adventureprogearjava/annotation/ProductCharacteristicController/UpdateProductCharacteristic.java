@@ -42,33 +42,11 @@ import java.lang.annotation.Target;
                                 @ExampleObject(
                                         name = "Good request",
                                         value = """
-                                                [
-                                                    {
-                                                        "value": "Рюкзак для походів",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 1
-                                                    },
-                                                    {
-                                                        "value": "Поліестер 600D",
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 2
-                                                    },
-                                                    {
-                                                        "value": "1.3 кг", 
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 3
-                                                    },
-                                                    {
-                                                        "value": "50 літрів", 
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 4
-                                                    },
-                                                    {
-                                                        "value": "Літній сезон", 
-                                                        "productId": 1,
-                                                        "categoryCharacteristicId": 5
-                                                    }
-                                                ]
+                                                {
+                                                   "value": "Рюкзак ",
+                                                   "productId": 142,
+                                                   "categoryCharacteristicId": 38
+                                                 }
                                                 """
                                 )
                         }
