@@ -22,9 +22,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping(method = RequestMethod.GET)
 @Operation(
-        summary = "Get category characteristics by name",
-        description = "Retrieves all available category characteristics with the provided name. " +
-                "If no characteristics are found with the given name, the service returns an empty list.",
+        summary = "Get category characteristics by Category name",
+        description = "Retrieves all available category characteristics with the provided name. ",
         parameters = @Parameter(
                 name = "categoryName",
                 description = "Name of the category characteristic to filter by.",

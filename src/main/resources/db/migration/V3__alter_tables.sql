@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.category_characteristics
 (
-    id              BIGSERIAL PRIMARY KEY,
+    id              BIGINT PRIMARY KEY,
     name            VARCHAR(255) NOT NULL,
     data_type       VARCHAR(50) NOT NULL CHECK (data_type IN ('STRING', 'NUMBER', 'BOOLEAN')),
     category_id     BIGINT NOT NULL
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.category_characteristics
 
 CREATE TABLE IF NOT EXISTS public.product_characteristics
 (
-    id                     BIGSERIAL PRIMARY KEY,
+    id                     BIGINT PRIMARY KEY,
     value                  VARCHAR(255) NOT NULL,
     product_id             BIGINT NOT NULL
         CONSTRAINT fk_product

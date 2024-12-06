@@ -3,6 +3,7 @@ package com.example.adventureprogearjava.services.impl;
 import com.example.adventureprogearjava.dto.CategoryCharacteristicDTO;
 import com.example.adventureprogearjava.entity.Category;
 import com.example.adventureprogearjava.entity.CategoryCharacteristic;
+import com.example.adventureprogearjava.exceptions.ResourceNotFoundException;
 import com.example.adventureprogearjava.repositories.CategoryCharacteristicRepository;
 import com.example.adventureprogearjava.repositories.CategoryRepository;
 import com.example.adventureprogearjava.services.CRUDService;
@@ -30,9 +31,24 @@ public class CategoryCharacteristicServiceImpl implements CRUDService<CategoryCh
         );
     }
 
+    private CategoryCharacteristic convertToEntity(CategoryCharacteristicDTO characteristicDTO) {
+        CategoryCharacteristic characteristic = new CategoryCharacteristic();
+        characteristic.setName(characteristicDTO.getName());
+        characteristic.setDataType(characteristicDTO.getDataType());
+
+        Category category = categoryRepository.findById(characteristicDTO.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + characteristicDTO.getCategoryId()));
+
+        characteristic.setCategory(category);
+        characteristic.setCategoryName(category.getCategoryNameEn());
+
+        return characteristic;
+    }
+
+
     public List<CategoryCharacteristicDTO> getCharacteristicsByCategoryName(String categoryName) {
         Category category = (Category) categoryRepository.findByCategoryNameEnOrCategoryNameUa(categoryName, categoryName)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with name : " + categoryName));
 
         return category.getCharacteristics().stream()
                 .map(this::convertToDTO)
@@ -49,20 +65,24 @@ public class CategoryCharacteristicServiceImpl implements CRUDService<CategoryCh
     @Override
     public CategoryCharacteristicDTO getById(Long id) {
         CategoryCharacteristic characteristic = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("CategoryCharacteristic not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("CategoryCharacteristic not found with id: " + id));
         return convertToDTO(characteristic);
     }
 
     @Override
     public CategoryCharacteristicDTO create(CategoryCharacteristicDTO characteristicDTO) {
-        CategoryCharacteristic characteristic = new CategoryCharacteristic();
-        characteristic.setName(characteristicDTO.getName());
-        characteristic.setDataType(characteristicDTO.getDataType());
+        if (characteristicDTO.getCategoryId() == null) {
+            throw new IllegalArgumentException("Category ID must not be null");
+        }
 
+        categoryRepository.findById(characteristicDTO.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + characteristicDTO.getCategoryId()));
+
+        CategoryCharacteristic characteristic = convertToEntity(characteristicDTO);
         CategoryCharacteristic savedCharacteristic = repository.save(characteristic);
+
         return convertToDTO(savedCharacteristic);
     }
-
     @Override
     public void update(CategoryCharacteristicDTO characteristicDTO, Long id) {
         CategoryCharacteristic existingCharacteristic = repository.findById(id)
