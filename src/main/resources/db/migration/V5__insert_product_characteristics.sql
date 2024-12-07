@@ -3,6 +3,7 @@ SEQUENCE product_characteristics_seq
     start
 1
     increment 1;
+/*
 
 INSERT INTO product_characteristics (id, value, product_id, category_characteristic_id)
 VALUES (nextval('product_characteristics_seq'), 'Рюкзак для походів',
@@ -2564,3 +2565,4 @@ VALUES (nextval('product_characteristics_seq'), 'Пляжні сонцезахи
         (SELECT id FROM category_characteristics WHERE name = 'Колір' AND category_name = 'Beach Accessories'));
 
 
+*\
