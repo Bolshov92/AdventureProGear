@@ -9,7 +9,9 @@ import com.example.adventureprogearjava.repositories.CategoryRepository;
 import com.example.adventureprogearjava.services.CRUDService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,13 +86,37 @@ public class CategoryCharacteristicServiceImpl implements CRUDService<CategoryCh
         return convertToDTO(savedCharacteristic);
     }
     @Override
+    @Transactional
     public void update(CategoryCharacteristicDTO characteristicDTO, Long id) {
         CategoryCharacteristic existingCharacteristic = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CategoryCharacteristic not found"));
-        existingCharacteristic.setName(characteristicDTO.getName());
-        existingCharacteristic.setDataType(characteristicDTO.getDataType());
+
+        if (characteristicDTO.getId() != null && !characteristicDTO.getId().equals(existingCharacteristic.getId())) {
+            throw new RuntimeException("ID mismatch");
+        }
+
+        if (characteristicDTO.getDataType() != null) {
+            List<String> validDataTypes = Arrays.asList("STRING", "NUMBER", "BOOLEAN");
+            if (!validDataTypes.contains(characteristicDTO.getDataType())) {
+                throw new IllegalArgumentException("Invalid dataType: " + characteristicDTO.getDataType());
+            }
+            existingCharacteristic.setDataType(characteristicDTO.getDataType());
+        }
+
+        if (characteristicDTO.getName() != null) {
+            existingCharacteristic.setName(characteristicDTO.getName());
+        }
+
+        if (characteristicDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(characteristicDTO.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + characteristicDTO.getCategoryId()));
+            existingCharacteristic.setCategory(category);
+        }
+
         repository.save(existingCharacteristic);
+        characteristicDTO.setId(existingCharacteristic.getId());
     }
+
 
     @Override
     public void delete(Long id) {

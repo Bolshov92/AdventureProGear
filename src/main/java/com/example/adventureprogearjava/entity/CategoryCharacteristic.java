@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryCharacteristic extends BaseEntity {
+public class CategoryCharacteristic  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_characteristics_seq")
