@@ -1,6 +1,7 @@
 package com.example.adventureprogearjava.repositories;
 
 import com.example.adventureprogearjava.entity.Category;
+import com.example.adventureprogearjava.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -65,4 +66,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> getCategoryByCategoryNameEnOrCategoryNameUa(String categoryNameEn, String categoryNameUa);
 
     Optional<Category> findByCategoryNameUa(String categoryNameUa);
+
+    @Query(value = "SELECT * FROM products WHERE " +
+            "(LOWER(category_name_en) = LOWER(:name) OR LOWER(category_name_ua) = LOWER(:name))",
+            nativeQuery = true)
+    Optional<Product> findByNameEnOrNameUa(@Param("name") String name);
+
+    Optional<Object> findByCategoryNameEnOrCategoryNameUa(String categoryName, String categoryName1);
 }

@@ -40,8 +40,8 @@ public class ProductController {
         return productCRUDService.getById(id);
     }
 
-    @GetProductsByName(path = "/name/{name}")
-    public List<ProductDTO> getProductsByName(@PathVariable String name) {
+    @GetProductsByName(path = "/search")
+    public List<ProductDTO> getProductsByName(@RequestParam String name) {
         return productService.getProductsByName(name);
     }
 
