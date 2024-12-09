@@ -20,14 +20,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping(method = RequestMethod.GET)
 @Operation(
-        summary = "Get all products by name",
-        description = "Retrieves all available products with the provided name. " +
+        summary = "Search products by name",
+        description = "Retrieves all available products matching the provided name. " +
                 "Note: When there are no products with the provided name, the service " +
-                "returns just an empty list instead of a 404 status code.",
+                "returns an empty list instead of a 404 status code.",
         parameters = @Parameter(
                 name = "name",
-                description = "Name of the product to filter by name",
+                description = "Name of the product to search for",
                 required = true,
+                in = ParameterIn.QUERY, // Параметр передається через query
                 schema = @Schema(type = "string")
         ),
         responses = {
@@ -51,3 +52,4 @@ public @interface GetProductsByName {
     @AliasFor(annotation = RequestMapping.class, attribute = "path")
     String[] path() default {};
 }
+
