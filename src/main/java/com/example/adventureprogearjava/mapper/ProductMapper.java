@@ -1,11 +1,10 @@
 package com.example.adventureprogearjava.mapper;
 
-import com.example.adventureprogearjava.dto.CategoryDTO;
-import com.example.adventureprogearjava.dto.ProductDTO;
-import com.example.adventureprogearjava.dto.SubSubCategoryDTO;
-import com.example.adventureprogearjava.dto.SubcategoryDTO;
+import com.example.adventureprogearjava.dto.*;
 import com.example.adventureprogearjava.entity.Category;
 import com.example.adventureprogearjava.entity.Product;
+import com.example.adventureprogearjava.entity.ProductCharacteristic;
+import com.example.adventureprogearjava.entity.CategoryCharacteristic;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -24,6 +23,7 @@ public interface ProductMapper {
     @Mapping(target = "attributes", source = "product.attributes")
     @Mapping(target = "contents", source = "product.contents")
     @Mapping(target = "selfLink", source = "product.id", qualifiedByName = "idToLink")
+    @Mapping(target = "characteristics", source = "product.productCharacteristics", qualifiedByName = "mapToProductCharacteristicDtos")
     ProductDTO toDto(Product product);
 
     @Mapping(target = "basePrice", source = "dto.basePrice")
@@ -31,6 +31,7 @@ public interface ProductMapper {
     @Mapping(target = "category", source = "dto.category", qualifiedByName = "mapToCategory")
     @Mapping(target = "attributes", source = "dto.attributes")
     @Mapping(target = "contents", source = "dto.contents")
+    @Mapping(target = "productCharacteristics", source = "dto.characteristics", qualifiedByName = "mapToProductCharacteristics")
     Product toEntity(ProductDTO dto);
 
     @Named("mapToCategoryDto")
@@ -145,6 +146,69 @@ public interface ProductMapper {
         subSubCategory.setCategoryNameUa(subSubCategoryDTO.getSubSubCategoryNameUa());
 
         return subSubCategory;
+    }
+
+    @Named("mapToProductCharacteristicDtos")
+    default List<ProductCharacteristicDTO> mapToProductCharacteristicDtos(List<ProductCharacteristic> characteristics) {
+        if (characteristics == null) {
+            return null;
+        }
+        return characteristics.stream()
+                .map(this::mapToProductCharacteristicDto)
+                .collect(Collectors.toList());
+    }
+
+    @Named("mapToProductCharacteristicDto")
+    default ProductCharacteristicDTO mapToProductCharacteristicDto(ProductCharacteristic productCharacteristic) {
+        if (productCharacteristic == null) {
+            return null;
+        }
+
+        ProductCharacteristicDTO dto = new ProductCharacteristicDTO();
+        dto.setId(productCharacteristic.getId());
+        dto.setValue(productCharacteristic.getValue());
+
+        if (productCharacteristic.getProduct() != null) {
+            dto.setProductId(productCharacteristic.getProduct().getId());
+        }
+
+        CategoryCharacteristic categoryCharacteristic = productCharacteristic.getCategoryCharacteristic();
+        if (categoryCharacteristic != null) {
+            dto.setName(categoryCharacteristic.getName());
+        }
+
+        if (categoryCharacteristic != null) {
+            dto.setCategoryCharacteristicId(categoryCharacteristic.getId());
+        }
+
+        return dto;
+    }
+
+
+    @Named("mapToProductCharacteristics")
+    default List<ProductCharacteristic> mapToProductCharacteristics(List<ProductCharacteristicDTO> characteristicDTOs) {
+        if (characteristicDTOs == null) {
+            return null;
+        }
+        return characteristicDTOs.stream()
+                .map(this::mapToProductCharacteristic)
+                .collect(Collectors.toList());
+    }
+
+    @Named("mapToProductCharacteristic")
+    default ProductCharacteristic mapToProductCharacteristic(ProductCharacteristicDTO productCharacteristicDTO) {
+        if (productCharacteristicDTO == null) {
+            return null;
+        }
+        ProductCharacteristic productCharacteristic = new ProductCharacteristic();
+        productCharacteristic.setId(productCharacteristicDTO.getId());
+        productCharacteristic.setValue(productCharacteristicDTO.getValue());
+
+        CategoryCharacteristic categoryCharacteristic = new CategoryCharacteristic();
+        categoryCharacteristic.setId(productCharacteristicDTO.getCategoryCharacteristicId());
+        productCharacteristic.setCategoryCharacteristic(categoryCharacteristic);
+
+        return productCharacteristic;
     }
 
     @Named("idToLink")

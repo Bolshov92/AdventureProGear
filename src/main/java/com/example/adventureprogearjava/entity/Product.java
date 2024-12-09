@@ -55,4 +55,8 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<ProductContent> contents;
 
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<ProductCharacteristic> productCharacteristics;
+
+
 }

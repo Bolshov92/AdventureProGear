@@ -1,9 +1,8 @@
-package com.example.adventureprogearjava.annotation.productController;
+package com.example.adventureprogearjava.annotation.CategoryCharacteristicController;
 
-import com.example.adventureprogearjava.dto.ProductDTO;
+import com.example.adventureprogearjava.dto.CategoryCharacteristicDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,19 +15,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to define a method as a GET endpoint to retrieve category characteristics by name.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping(method = RequestMethod.GET)
 @Operation(
-        summary = "Search products by name",
-        description = "Retrieves all available products matching the provided name. " +
-                "Note: When there are no products with the provided name, the service " +
-                "returns an empty list instead of a 404 status code.",
+        summary = "Get category characteristics by Category name",
+        description = "Retrieves all available category characteristics with the provided name. ",
         parameters = @Parameter(
-                name = "name",
-                description = "Name of the product to search for",
+                name = "categoryName",
+                description = "Name of the category characteristic to filter by.",
                 required = true,
-                in = ParameterIn.QUERY, // Параметр передається через query
+                in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
                 schema = @Schema(type = "string")
         ),
         responses = {
@@ -37,19 +37,23 @@ import java.lang.annotation.Target;
                         description = "Successful operation.",
                         content = @Content(
                                 mediaType = "application/json",
-                                schema = @Schema(implementation = ProductDTO.class)
+                                schema = @Schema(implementation = CategoryCharacteristicDTO.class)
                         )
                 ),
                 @ApiResponse(
                         responseCode = "400",
                         description = "Invalid request.",
                         content = @Content(schema = @Schema(implementation = String.class))
+                ),
+                @ApiResponse(
+                        responseCode = "404",
+                        description = "Category characteristics not found.",
+                        content = @Content(schema = @Schema(type = "string"))
                 )
         }
 )
-public @interface GetProductsByName {
+public @interface GetCategoryCharacteristicsByName {
 
     @AliasFor(annotation = RequestMapping.class, attribute = "path")
     String[] path() default {};
 }
-
