@@ -8,7 +8,7 @@ import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface ContentMapper {
-    String api = "https://empowering-happiness-production.up.railway.app/api/v1/productContent/";
+    String api = "https://adventure-production-f65e.up.railway.app/api/v1/productContent/";
 
     @Mapping(target = "selfLink", source = "content.id", qualifiedByName = "idToLink")
     ContentDTO toDto(ProductContent content);

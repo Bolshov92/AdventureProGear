@@ -35,7 +35,7 @@ public class SwaggerConfig {
                         )
                 )
                 .servers(List.of(
-                        new Server().url("https://empowering-happiness-production.up.railway.app")
+                        new Server().url("https://adventure-production-f65e.up.railway.app")
                 ))
                 .components(new Components()
                         .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
