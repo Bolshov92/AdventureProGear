@@ -21,13 +21,9 @@ alter table sections
 
 CREATE TABLE IF NOT EXISTS public.categories
 (
-<<<<<<< HEAD
-    id BIGINT PRIMARY KEY,
-=======
 
     id                 BIGINT PRIMARY KEY,
 
->>>>>>> upstream/dev
     category_name_ua   VARCHAR NOT NULL UNIQUE,
     category_name_en   VARCHAR NOT NULL UNIQUE,
     parent_category_id BIGINT
@@ -72,18 +68,7 @@ CREATE TABLE IF NOT EXISTS public.products_review
     review_date DATE,
     product_id  BIGINT NOT NULL
         CONSTRAINT fk_product
-<<<<<<< HEAD
-<<<<<<< HEAD
-        REFERENCES public.products(id)ON DELETE CASCADE,
-=======
-
         REFERENCES public.products(id) ON DELETE CASCADE,
-
->>>>>>> upstream/dev
-
-=======
-        REFERENCES public.products(id) ON DELETE CASCADE,
->>>>>>> upstream/dev
     user_id     BIGINT NOT NULL
         CONSTRAINT fk_user
         REFERENCES public.users(id),
@@ -226,4 +211,3 @@ ALTER TABLE product_attributes
 
 ALTER TABLE product_attributes
     ADD COLUMN picture_url VARCHAR(255);
-
