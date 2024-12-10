@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class})
 public interface ProductMapper {
-    String api = "https://empowering-happiness-production.up.railway.app/api/public/products/";
+    String api = "https://adventure-production-f65e.up.railway.app/api/public/products/";
 
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "basePrice", source = "product.basePrice")
