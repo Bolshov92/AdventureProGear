@@ -19,6 +19,8 @@ public interface ProductMapper {
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "basePrice", source = "product.basePrice")
     @Mapping(target = "gender", source = "product.gender")
+    @Mapping(target = "averageRating", source = "product.averageRating")
+    @Mapping(target = "reviewCount", source = "product.reviewCount")
     @Mapping(target = "category", source = "product.category", qualifiedByName = "mapToCategoryDto")
     @Mapping(target = "attributes", source = "product.attributes")
     @Mapping(target = "contents", source = "product.contents")

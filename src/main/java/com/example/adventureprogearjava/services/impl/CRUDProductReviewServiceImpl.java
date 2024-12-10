@@ -51,6 +51,7 @@ public class CRUDProductReviewServiceImpl implements ProductReviewCRUDService {
         return productReviewMapper.toDTO(review);
     }
 
+    @Transactional
     @Override
     public ProductReviewDTO create(ProductReviewDTO productReviewDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -73,10 +74,14 @@ public class CRUDProductReviewServiceImpl implements ProductReviewCRUDService {
 
         ProductReview savedReview = productReviewRepository.save(productReview);
 
+
         double averageRating = calculateAverageRating(productReviewDTO.getProductId());
         Product product = productRepository.findById(productReviewDTO.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         productRepository.updateAverageRating(product.getId(), averageRating);
+
+        int reviewCount = productReviewRepository.countByProductId(productReviewDTO.getProductId());
+        productRepository.updateReviewCount(product.getId(), reviewCount);
 
         return productReviewMapper.toDTO(savedReview);
     }
