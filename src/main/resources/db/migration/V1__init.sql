@@ -211,4 +211,3 @@ ALTER TABLE product_attributes
 
 ALTER TABLE product_attributes
     ADD COLUMN picture_url VARCHAR(255);
-

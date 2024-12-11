@@ -28,4 +28,7 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, Lo
     @Modifying
     @Query("UPDATE ProductReview pr SET pr.dislikes = :dislikes WHERE pr.id = :id")
     void updateDislikes(@Param("id") Long id, @Param("dislikes") int dislikes);
+
+    @Query("SELECT COUNT(pr) FROM ProductReview pr WHERE pr.product.id = :productId")
+    int countByProductId(@Param("productId") Long productId);
 }
