@@ -33,6 +33,12 @@ public class ProductDTO {
 
     Gender gender;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Double averageRating;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Integer reviewCount;
+
     @NotNull(message = "Category ID is required")
     CategoryDTO category;
     List<ProductCharacteristicDTO> characteristics;

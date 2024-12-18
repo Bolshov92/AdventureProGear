@@ -1,10 +1,7 @@
 package com.example.adventureprogearjava.mapper;
 
 import com.example.adventureprogearjava.dto.*;
-import com.example.adventureprogearjava.entity.Category;
-import com.example.adventureprogearjava.entity.Product;
-import com.example.adventureprogearjava.entity.ProductCharacteristic;
-import com.example.adventureprogearjava.entity.CategoryCharacteristic;
+import com.example.adventureprogearjava.entity.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -19,6 +16,8 @@ public interface ProductMapper {
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "basePrice", source = "product.basePrice")
     @Mapping(target = "gender", source = "product.gender")
+    @Mapping(target = "averageRating", source = "product.averageRating")
+    @Mapping(target = "reviewCount", source = "product.reviewCount")
     @Mapping(target = "category", source = "product.category", qualifiedByName = "mapToCategoryDto")
     @Mapping(target = "attributes", source = "product.attributes")
     @Mapping(target = "contents", source = "product.contents")
@@ -210,6 +209,10 @@ public interface ProductMapper {
 
         return productCharacteristic;
     }
+
+    @Mapping(target = "productId", source = "product.id")
+    ProductAttributeDTO toAttributeDto(ProductAttribute attribute);
+
 
     @Named("idToLink")
     default String getLink(Long id) {

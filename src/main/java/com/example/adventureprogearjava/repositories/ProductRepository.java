@@ -116,4 +116,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             nativeQuery = true)
     Optional<Product> findByNameEnOrNameUa(@Param("name") String name);
 
+    @Modifying
+    @Query("UPDATE Product p SET p.reviewCount = :reviewCount WHERE p.id = :productId")
+    void updateReviewCount(@Param("productId") Long productId, @Param("reviewCount") int reviewCount);
+
+
+
 }

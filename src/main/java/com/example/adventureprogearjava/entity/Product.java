@@ -39,6 +39,9 @@ public class Product extends BaseEntity {
     @Column(name = "average_rating")
     private Double averageRating = 0.0;
 
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount = 0;
+
     @Enumerated(EnumType.STRING)
     Gender gender;
 
