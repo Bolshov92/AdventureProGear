@@ -49,8 +49,7 @@ public class ProductCharacteristicController {
     }
 
     @DeleteProductCharacteristic(path = "/{id}")
-    public ResponseEntity<Void> deleteProductCharacteristic(@PathVariable Long id) {
+    public void deleteProductCharacteristic(@PathVariable Long id) {
         productCharacteristicService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

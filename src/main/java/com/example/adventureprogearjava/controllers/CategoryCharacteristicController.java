@@ -49,8 +49,7 @@ public class CategoryCharacteristicController {
     }
 
     @DeleteCategoryCharacteristics(path = "/{id}")
-    public ResponseEntity<Void> deleteCategoryCharacteristic(@PathVariable Long id) {
+    public void deleteCategoryCharacteristic(@PathVariable Long id) {
         categoryCharacteristicService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }
