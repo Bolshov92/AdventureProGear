@@ -67,7 +67,6 @@ public class SecurityConfig {
                                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST, "/api/blog/posts/**")).hasAuthority("ROLE_ADMIN")
                                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET, "/api/productAttributes/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/api/public/**")).permitAll()
-                                .requestMatchers(mvcMatcherBuilder.pattern("/api/public/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/api/**")).authenticated()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/**")).permitAll()
 
@@ -86,7 +85,6 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
@@ -95,7 +93,7 @@ public class SecurityConfig {
                 "https://adventure-production-f65e.up.railway.app",
                 "https://adventure-pro-gear-theta.vercel.app"
         ));
-        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
