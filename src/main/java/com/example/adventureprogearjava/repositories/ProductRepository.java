@@ -23,6 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                        @Param("price") Long price,
                        @Param("gender") String gender,
                        @Param("categoryId") Long categoryId);
+
     @Modifying
     @Query("UPDATE Product p SET p.averageRating = :averageRating WHERE p.id = :productId")
     void updateAverageRating(@Param("productId") Long productId, @Param("averageRating") Double averageRating);
@@ -50,9 +51,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void updateGender(@Param("id") Long id,
                       @Param("gender") String gender);
 
-    @Query(value = "select * from products where starts_with(lower(product_name_en), lower(:name)) or starts_with(lower(product_name_ua), lower(:name))",
+    @Query(value = "SELECT * FROM products " +
+            "WHERE (lower(product_name_en) LIKE lower(concat('%', :name, '%')) " +
+            "OR lower(product_name_ua) LIKE lower(concat('%', :name, '%')))",
             nativeQuery = true)
     List<Product> findByProductName(@Param("name") String name);
+
 
     @Query(value = "SELECT * FROM products where gender= CAST(:gender as gender)", nativeQuery = true)
     List<Product> findByGender(@Param("gender") String gender);
@@ -71,8 +75,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.gender = CAST(:gender as gender)",
             nativeQuery = true)
     List<Product> findByCategoryAndGender(@Param("category") String category, @Param("gender") String gender);
+
     @Query("SELECT p.basePrice FROM Product p WHERE p.id = :productId")
     Long findProductPriceById(@Param("productId") Long productId);
+
     List<Product> findByBasePriceBetween(Long from, Long to);
 
     List<Product> findByBasePriceLessThanEqual(Long priceTo);
@@ -119,7 +125,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query("UPDATE Product p SET p.reviewCount = :reviewCount WHERE p.id = :productId")
     void updateReviewCount(@Param("productId") Long productId, @Param("reviewCount") int reviewCount);
-
 
 
 }
