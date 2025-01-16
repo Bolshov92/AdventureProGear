@@ -49,6 +49,7 @@ public class SecurityConfig {
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspect);
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfigurer ->
                         csrfConfigurer.ignoringRequestMatchers(
                                         mvcMatcherBuilder.pattern("/**"))
@@ -99,6 +100,8 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
+        System.out.println("CORS Configuration Applied: " + configuration);
 
         return source;
     }
