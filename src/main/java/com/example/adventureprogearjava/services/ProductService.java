@@ -1,6 +1,7 @@
 package com.example.adventureprogearjava.services;
 
 import com.example.adventureprogearjava.dto.ProductDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -25,8 +26,7 @@ public interface ProductService {
 
     List<ProductDTO> getProductsByPriceFrom(Long priceFrom);
 
-    List<ProductDTO> getAllProducts(String gender, String category, Long priceFrom, Long priceTo);
+    Page<ProductDTO> getAllProducts(String gender, String category, Long priceFrom, Long priceTo, int page, int size);
 
-    List<ProductDTO> getProductsByAdvancedFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender);
-
+    Page<ProductDTO> getProductsByAdvancedFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender, int page, int size);
 }

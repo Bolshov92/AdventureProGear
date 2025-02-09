@@ -25,6 +25,7 @@ public interface ProductMapper {
     @Mapping(target = "characteristics", source = "product.productCharacteristics", qualifiedByName = "mapToProductCharacteristicDtos")
     ProductDTO toDto(Product product);
 
+
     @Mapping(target = "basePrice", source = "dto.basePrice")
     @Mapping(target = "gender", source = "dto.gender")
     @Mapping(target = "category", source = "dto.category", qualifiedByName = "mapToCategory")

@@ -1,5 +1,6 @@
 package com.example.adventureprogearjava.services.impl;
 
+import com.example.adventureprogearjava.dto.CategoryDTO;
 import com.example.adventureprogearjava.dto.ProductDTO;
 import com.example.adventureprogearjava.entity.Product;
 import com.example.adventureprogearjava.entity.enums.Gender;
@@ -13,11 +14,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -132,61 +136,80 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProducts(String gender, String category, Long priceFrom, Long priceTo) {
-        log.info("Getting all products with filters");
+    public Page<ProductDTO> getAllProducts(String gender, String category, Long priceFrom, Long priceTo, int page, int size) {
+        log.info("🔍 [START] Отримання всіх продуктів з пагінацією");
 
-        if (priceFrom != null && priceTo == null) {
-            return getProductsByPriceFrom(priceFrom);
-        }
+        Pageable pageable = PageRequest.of(page, size);
+        Long categoryId = (category != null) ? Long.valueOf(category) : null;
 
-        if (priceTo != null && priceFrom == null) {
-            return getProductsByPriceTo(priceTo);
-        }
+        // Виконання SQL-запиту
+        Page<Object[]> results = productRepository.findByFilters(categoryId, priceFrom, priceTo, gender, pageable);
 
-        if (gender != null && category != null && priceFrom != null && priceTo != null) {
-            return getProductsByPriceAndCategoryAndGender(priceFrom, priceTo, category, gender);
-        } else if (gender != null && category != null) {
-            return getProductsByCategoryAndGender(category, gender);
-        } else if (category != null && priceFrom != null && priceTo != null) {
-            return getProductsByPriceAndCategory(priceFrom, priceTo, category);
-        } else if (gender != null && priceFrom != null && priceTo != null) {
-            return getProductsByPriceAndGender(priceFrom, priceTo, gender);
-        } else if (priceFrom != null && priceTo != null) {
-            return getProductsByPrice(priceFrom, priceTo);
-        } else if (gender != null) {
-            return getProductsByGender(gender);
-        } else if (category != null) {
-            return getProductsByCategory(category);
-        }
+        // Мапимо результати у ProductDTO
+        Page<ProductDTO> products = results.map(row -> ProductDTO.builder()
+                .productId(((Number) row[0]).longValue())  // productId
+                .productNameUa((String) row[1])  // productNameUa
+                .productNameEn((String) row[2])  // productNameEn
+                .descriptionUa((String) row[3])  // descriptionUa
+                .descriptionEn((String) row[4])  // descriptionEn
+                .basePrice(((Number) row[5]).longValue())  // basePrice
+                .gender(Gender.valueOf((String) row[6]))  // gender
+                .averageRating(((Number) row[7]).doubleValue())  // averageRating
+                .reviewCount(((Number) row[8]).intValue())  // reviewCount
+                .category(CategoryDTO.builder()
+                        .id(((Number) row[9]).longValue())  // categoryId
+                        .categoryNameEn((String) row[10])  // categoryNameEn
+                        .categoryNameUa((String) row[11])  // categoryNameUa
+                        .build())
+                .selfLink("https://adventure-production.up.railway.app/api/public/products/" + ((Number) row[0]).longValue())
+                .build());
 
-        return productCRUDService.getAll();
+        return products;
     }
 
-    @Override
-    public List<ProductDTO> getProductsByAdvancedFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender) {
-        if (categoryId != null && !isValidNumber(categoryId)) {
-            throw new IllegalArgumentException("Invalid categoryId: must be a number");
-        }
-        if (subcategoryId != null && !isValidNumber(subcategoryId)) {
-            throw new IllegalArgumentException("Invalid subcategoryId: must be a number");
-        }
-        if (priceFrom != null && !isValidNumber(priceFrom)) {
-            throw new IllegalArgumentException("Invalid priceFrom: must be a number");
-        }
-        if (priceTo != null && !isValidNumber(priceTo)) {
-            throw new IllegalArgumentException("Invalid priceTo: must be a number");
-        }
 
-        if (priceFrom != null && priceFrom < 0) {
-            throw new IllegalArgumentException("PriceFrom must be a positive value");
-        }
-        if (priceTo != null && priceTo < 0) {
-            throw new IllegalArgumentException("PriceTo must be a positive value");
+    @Override
+    public Page<ProductDTO> getProductsByAdvancedFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender, int page, int size) {
+        log.info("🔍 [START] Отримання продуктів з фільтрами + пагінацією");
+
+        validateFilters(categoryId, subcategoryId, priceFrom, priceTo, gender);
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Object[]> results = productRepository.findByFilters(categoryId, priceFrom, priceTo, gender, pageable);
+
+        Page<ProductDTO> products = results.map(row -> ProductDTO.builder()
+                .productId(((Number) row[0]).longValue())  // productId
+                .productNameUa((String) row[1])  // productNameUa
+                .productNameEn((String) row[2])  // productNameEn
+                .descriptionUa((String) row[3])  // descriptionUa
+                .descriptionEn((String) row[4])  // descriptionEn
+                .basePrice(((Number) row[5]).longValue())  // basePrice
+                .gender(Gender.valueOf((String) row[6]))  // gender
+                .averageRating(((Number) row[7]).doubleValue())  // averageRating
+                .reviewCount(((Number) row[8]).intValue())  // reviewCount
+                .category(CategoryDTO.builder()
+                        .id(((Number) row[9]).longValue())  // categoryId
+                        .categoryNameEn((String) row[10])  // categoryNameEn
+                        .categoryNameUa((String) row[11])  // categoryNameUa
+                        .build())
+                .selfLink("https://adventure-production.up.railway.app/api/public/products/" + ((Number) row[0]).longValue())
+                .build());
+
+        return products;
+    }
+
+
+    private void validateFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender) {
+        List<Long> numericParams = Arrays.asList(categoryId, subcategoryId, priceFrom, priceTo);
+        for (Long param : numericParams) {
+            if (param != null && param < 0) {
+                throw new IllegalArgumentException("Invalid value: must be a positive number");
+            }
         }
         if (priceFrom != null && priceTo != null && priceFrom > priceTo) {
             throw new IllegalArgumentException("PriceFrom cannot be greater than PriceTo");
         }
-
         if (gender != null) {
             try {
                 Gender.valueOf(gender.toUpperCase());
@@ -194,9 +217,6 @@ public class ProductServiceImpl implements ProductService {
                 throw new IllegalArgumentException("Invalid gender value: " + gender + ". Allowed values: " + Arrays.toString(Gender.values()));
             }
         }
-
-        List<Product> products = productRepository.findByFilters(categoryId, subcategoryId, priceFrom, priceTo, gender);
-        return products.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     private boolean isValidNumber(Long value) {
