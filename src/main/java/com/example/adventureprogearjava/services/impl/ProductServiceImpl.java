@@ -2,7 +2,6 @@ package com.example.adventureprogearjava.services.impl;
 
 import com.example.adventureprogearjava.dto.CategoryDTO;
 import com.example.adventureprogearjava.dto.ProductDTO;
-import com.example.adventureprogearjava.entity.Product;
 import com.example.adventureprogearjava.entity.enums.Gender;
 import com.example.adventureprogearjava.mapper.ProductMapper;
 import com.example.adventureprogearjava.repositories.CategoryRepository;
@@ -15,7 +14,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
