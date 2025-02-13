@@ -49,6 +49,7 @@ public class SecurityConfig {
         MvcRequestMatcher.Builder mvcMatcherBuilder = new MvcRequestMatcher.Builder(introspect);
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrfConfigurer ->
                         csrfConfigurer.ignoringRequestMatchers(
                                         mvcMatcherBuilder.pattern("/**"))
@@ -91,7 +92,8 @@ public class SecurityConfig {
                 "http://localhost:8080",
                 "https://adventure-pro-gear.vercel.app",
                 "https://adventure-production-f65e.up.railway.app",
-                "https://adventure-pro-gear-theta.vercel.app"
+                "https://adventure-pro-gear-theta.vercel.app",
+                "https://adventure-production.up.railway.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -99,6 +101,8 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
+        System.out.println("CORS Configuration Applied: " + configuration);
 
         return source;
     }

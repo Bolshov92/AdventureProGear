@@ -1,6 +1,8 @@
 package com.example.adventureprogearjava.repositories;
 
 import com.example.adventureprogearjava.entity.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,6 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                        @Param("price") Long price,
                        @Param("gender") String gender,
                        @Param("categoryId") Long categoryId);
+
     @Modifying
     @Query("UPDATE Product p SET p.averageRating = :averageRating WHERE p.id = :productId")
     void updateAverageRating(@Param("productId") Long productId, @Param("averageRating") Double averageRating);
@@ -50,9 +53,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     void updateGender(@Param("id") Long id,
                       @Param("gender") String gender);
 
-    @Query(value = "select * from products where starts_with(lower(product_name_en), lower(:name)) or starts_with(lower(product_name_ua), lower(:name))",
+    @Query(value = "SELECT * FROM products " +
+            "WHERE (lower(product_name_en) LIKE lower(concat('%', :name, '%')) " +
+            "OR lower(product_name_ua) LIKE lower(concat('%', :name, '%')))",
             nativeQuery = true)
     List<Product> findByProductName(@Param("name") String name);
+
 
     @Query(value = "SELECT * FROM products where gender= CAST(:gender as gender)", nativeQuery = true)
     List<Product> findByGender(@Param("gender") String gender);
@@ -71,8 +77,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "AND p.gender = CAST(:gender as gender)",
             nativeQuery = true)
     List<Product> findByCategoryAndGender(@Param("category") String category, @Param("gender") String gender);
+
     @Query("SELECT p.basePrice FROM Product p WHERE p.id = :productId")
     Long findProductPriceById(@Param("productId") Long productId);
+
     List<Product> findByBasePriceBetween(Long from, Long to);
 
     List<Product> findByBasePriceLessThanEqual(Long priceTo);
@@ -83,32 +91,49 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     String getProductNameById(@Param("productId") Long productId);
 
     @Query(value = """
-                SELECT p.* 
-                FROM products p 
-                JOIN categories c ON c.id = p.category 
-                WHERE 
-                    (:categoryId IS NULL OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
-                     EXISTS (
-                        SELECT 1 
-                        FROM categories sc 
-                        WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
-                    )) AND
-                    (:subcategoryId IS NULL OR c.id = :subcategoryId OR 
-                     EXISTS (
-                        SELECT 1 
-                        FROM categories sc
-                        WHERE sc.id = :subcategoryId AND sc.parent_category_id = c.id
-                    )) AND
-                    (:priceFrom IS NULL OR p.base_price >= :priceFrom) AND
-                    (:priceTo IS NULL OR p.base_price <= :priceTo) AND
-                    (:gender IS NULL OR p.gender = CAST(:gender AS gender))
-            """, nativeQuery = true)
-    List<Product> findByFilters(
+        SELECT p.id, 
+               p.product_name_ua,   
+               p.product_name_en,   
+               p.description_ua,   
+               p.description_en,   
+               p.base_price,       
+               p.gender, 
+               p.average_rating,   
+               p.review_count,     
+               c.id, 
+               c.category_name_en, 
+               c.category_name_ua
+        FROM products p 
+        JOIN categories c ON c.id = p.category 
+        WHERE 
+            (COALESCE(:categoryId, 0) = 0 OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
+             EXISTS (
+                SELECT 1 FROM categories sc WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
+            )) AND
+            (COALESCE(:priceFrom, 0) = 0 OR p.base_price >= :priceFrom) AND
+            (COALESCE(:priceTo, 999999) = 999999 OR p.base_price <= :priceTo) AND
+            (COALESCE(:gender, '') = '' OR p.gender = CAST(:gender AS gender))
+        """,
+            countQuery = """
+        SELECT COUNT(*) 
+        FROM products p 
+        JOIN categories c ON c.id = p.category 
+        WHERE 
+            (COALESCE(:categoryId, 0) = 0 OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
+             EXISTS (
+                SELECT 1 FROM categories sc WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
+            )) AND
+            (COALESCE(:priceFrom, 0) = 0 OR p.base_price >= :priceFrom) AND
+            (COALESCE(:priceTo, 999999) = 999999 OR p.base_price <= :priceTo) AND
+            (COALESCE(:gender, '') = '' OR p.gender = CAST(:gender AS gender))
+        """,
+            nativeQuery = true)
+    Page<Object[]> findByFilters(
             @Param("categoryId") Long categoryId,
-            @Param("subcategoryId") Long subcategoryId,
             @Param("priceFrom") Long priceFrom,
             @Param("priceTo") Long priceTo,
-            @Param("gender") String gender);
+            @Param("gender") String gender,
+            Pageable pageable);
 
 
     @Query(value = "SELECT * FROM products WHERE " +
@@ -119,7 +144,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Modifying
     @Query("UPDATE Product p SET p.reviewCount = :reviewCount WHERE p.id = :productId")
     void updateReviewCount(@Param("productId") Long productId, @Param("reviewCount") int reviewCount);
-
 
 
 }

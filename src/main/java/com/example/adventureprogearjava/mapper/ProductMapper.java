@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {CategoryMapper.class})
 public interface ProductMapper {
-    String api = "https://adventure-production-f65e.up.railway.app/api/public/products/";
+    String api = "https://adventure-production.up.railway.app/api/public/products/";
 
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "basePrice", source = "product.basePrice")
@@ -24,6 +24,7 @@ public interface ProductMapper {
     @Mapping(target = "selfLink", source = "product.id", qualifiedByName = "idToLink")
     @Mapping(target = "characteristics", source = "product.productCharacteristics", qualifiedByName = "mapToProductCharacteristicDtos")
     ProductDTO toDto(Product product);
+
 
     @Mapping(target = "basePrice", source = "dto.basePrice")
     @Mapping(target = "gender", source = "dto.gender")
