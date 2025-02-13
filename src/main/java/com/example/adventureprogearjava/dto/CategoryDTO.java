@@ -37,4 +37,14 @@ public class CategoryDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(description = "Self link", example = "/categories/sneakers")
     String selfLink;
+
+    public CategoryDTO(Long id, String categoryNameEn, String categoryNameUa, Long sectionId, Long parentCategoryId, List<SubcategoryDTO> subcategories) {
+        this.id = id;
+        this.categoryNameEn = categoryNameEn;
+        this.categoryNameUa = categoryNameUa;
+        this.sectionId = sectionId;
+        this.parentCategoryId = parentCategoryId;
+        this.subcategories = subcategories;
+    }
+
 }

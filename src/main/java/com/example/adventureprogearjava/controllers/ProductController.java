@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +27,17 @@ public class ProductController {
 
     ProductService productService;
 
-    @GetAllProducts(path = "")
-    public List<ProductDTO> getAllProducts(
+    @GetMapping
+    public Page<ProductDTO> getAllProducts(
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Long priceFrom,
-            @RequestParam(required = false) Long priceTo) {
-        return productService.getAllProducts(gender, category, priceFrom, priceTo);
+            @RequestParam(required = false) Long priceTo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getAllProducts(gender, category, priceFrom, priceTo, page, size);
     }
+
 
     @GetProductById(path = "/{id}")
     public ProductDTO getProductById(@PathVariable Long id) {
@@ -60,16 +64,18 @@ public class ProductController {
         productCRUDService.delete(id);
     }
 
-    @GetProductsByFilters(path = "/filter")
-    public List<ProductDTO> getProductsByFilters(
+    @GetMapping("/filter")
+    public Page<ProductDTO> getProductsByFilters(
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long subcategoryId,
             @RequestParam(required = false) Long priceFrom,
             @RequestParam(required = false) Long priceTo,
-            @RequestParam(required = false) String gender) {
-
+            @RequestParam(required = false) String gender,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
         return productService.getProductsByAdvancedFilters(categoryId, subcategoryId,
-                priceFrom, priceTo, gender);
+                priceFrom, priceTo, gender, page, size);
     }
+
 }
