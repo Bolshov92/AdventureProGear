@@ -18,8 +18,8 @@ import lombok.experimental.FieldDefaults;
 public class ProductContent extends BaseEntity {
 
     @Transient
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_content_seq")
-    @SequenceGenerator(name = "product_content_seq", sequenceName = "product_content_seq", allocationSize = 1)
+ //   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_content_seq")
+   // @SequenceGenerator(name = "product_content_seq", sequenceName = "product_content_seq", allocationSize = 1)
     Long sequenceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
