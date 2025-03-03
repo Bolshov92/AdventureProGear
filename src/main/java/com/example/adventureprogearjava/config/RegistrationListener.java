@@ -5,6 +5,8 @@ import com.example.adventureprogearjava.services.MailService;
 import com.example.adventureprogearjava.services.VerificationTokenService;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,10 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     MailService mailService;
     VerificationTokenService verificationTokenService;
     Environment environment;
+
+    @Value("${app.base-url}")
+    @NonFinal
+    String serverUrl;
 
     public RegistrationListener(MailService mailService, VerificationTokenService verificationTokenService, Environment environment) {
         this.mailService = mailService;
@@ -37,7 +43,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
         String recipientAddress = userEmailDto.getEmail();
         String subject = environment.getProperty("email.registration.subject", "Registration Confirmation");
-        String confirmationUrl = "https://adventure-production.up.railway.app" + event.getAppUrl() + "/api/public/registration/confirmation?token=" + token;
+        String confirmationUrl = serverUrl + event.getAppUrl() + "/api/public/registration/confirmation?token=" + token;
         String emailBody = environment.getProperty("email.registration.body", "To complete the registration, please follow the link:") + "\r\n" + confirmationUrl;
 
         mailService.sendEmail(recipientAddress, subject, emailBody);
