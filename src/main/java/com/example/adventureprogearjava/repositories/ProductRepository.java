@@ -1,6 +1,7 @@
 package com.example.adventureprogearjava.repositories;
 
 import com.example.adventureprogearjava.entity.Product;
+import com.example.adventureprogearjava.entity.enums.Gender;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -90,46 +91,42 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p.descriptionEn FROM Product p WHERE p.id = :productId")
     String getProductNameById(@Param("productId") Long productId);
 
-    @Query(value = """
-        SELECT p.id, 
-               p.product_name_ua,   
-               p.product_name_en,   
-               p.description_ua,   
-               p.description_en,   
-               p.base_price,       
-               p.gender, 
-               p.average_rating,   
-               p.review_count,     
-               c.id, 
-               c.category_name_en, 
-               c.category_name_ua
-        FROM products p 
-        JOIN categories c ON c.id = p.category 
-        WHERE 
-            (COALESCE(:categoryId, 0) = 0 OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
-             EXISTS (
-                SELECT 1 FROM categories sc WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
-            )) AND
-            (COALESCE(:priceFrom, 0) = 0 OR p.base_price >= :priceFrom) AND
-            (COALESCE(:priceTo, 999999) = 999999 OR p.base_price <= :priceTo) AND
-            (COALESCE(:gender, '') = '' OR p.gender = CAST(:gender AS gender))
-        """,
-            countQuery = """
-        SELECT COUNT(*) 
-        FROM products p 
-        JOIN categories c ON c.id = p.category 
-        WHERE 
-            (COALESCE(:categoryId, 0) = 0 OR c.id = :categoryId OR c.parent_category_id = :categoryId OR 
-             EXISTS (
-                SELECT 1 FROM categories sc WHERE sc.id = c.parent_category_id AND sc.parent_category_id = :categoryId
-            )) AND
-            (COALESCE(:priceFrom, 0) = 0 OR p.base_price >= :priceFrom) AND
-            (COALESCE(:priceTo, 999999) = 999999 OR p.base_price <= :priceTo) AND
-            (COALESCE(:gender, '') = '' OR p.gender = CAST(:gender AS gender))
-        """,
-            nativeQuery = true)
-    Page<Object[]> findByFilters(
+    @Query("SELECT DISTINCT p FROM Product p " +
+            "JOIN FETCH p.category c " +
+            "LEFT JOIN FETCH p.attributes " +
+            "LEFT JOIN FETCH p.contents " +
+            "LEFT JOIN FETCH p.productCharacteristics " +
+            "LEFT JOIN FETCH c.parentCategory " +
+            "LEFT JOIN FETCH c.section " +
+            "LEFT JOIN FETCH c.characteristics " +
+            "WHERE (:categoryId IS NULL OR c.id = :categoryId OR c.parentCategory.id = :categoryId) " +
+            "AND (:priceFrom IS NULL OR p.basePrice >= :priceFrom) " +
+            "AND (:priceTo IS NULL OR p.basePrice <= :priceTo) " +
+            "AND (:gender IS NULL OR p.gender = :gender)")
+    Page<Product> findByFilters(
             @Param("categoryId") Long categoryId,
+            @Param("priceFrom") Long priceFrom,
+            @Param("priceTo") Long priceTo,
+            @Param("gender") String gender,
+            Pageable pageable);
+
+    @Query("SELECT DISTINCT p FROM Product p " +
+            "JOIN FETCH p.category c " +
+            "LEFT JOIN FETCH p.attributes " +
+            "LEFT JOIN FETCH p.contents " +
+            "LEFT JOIN FETCH p.productCharacteristics " +
+            "LEFT JOIN FETCH c.parentCategory " +
+            "LEFT JOIN FETCH c.section " +
+            "LEFT JOIN FETCH c.characteristics " +
+            "WHERE (:categoryId IS NULL OR c.id = :categoryId OR c.parentCategory.id = :categoryId " +
+            "OR EXISTS (SELECT sc FROM Category sc WHERE sc.id = c.parentCategory.id AND sc.parentCategory.id = :categoryId)) " +
+            "AND (:subcategoryId IS NULL OR c.id = :subcategoryId) " +
+            "AND (:priceFrom IS NULL OR p.basePrice >= :priceFrom) " +
+            "AND (:priceTo IS NULL OR p.basePrice <= :priceTo) " +
+            "AND (:gender IS NULL OR p.gender = :gender)")
+    Page<Product> findByAdvancedFilters(
+            @Param("categoryId") Long categoryId,
+            @Param("subcategoryId") Long subcategoryId,
             @Param("priceFrom") Long priceFrom,
             @Param("priceTo") Long priceTo,
             @Param("gender") String gender,

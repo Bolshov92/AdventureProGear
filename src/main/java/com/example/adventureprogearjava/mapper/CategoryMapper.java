@@ -12,6 +12,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
+    String CATEGORY_API = "https://adventure-production-f742.up.railway.app/api/public/categories/";
+
     @Mapping(target = "sectionId", source = "section.id")
     @Mapping(target = "selfLink", expression = "java(createSelfLink(category))")
     CategoryDTO toDTO(Category category);
@@ -23,11 +25,13 @@ public interface CategoryMapper {
     @Mapping(target = "subcategoryNameEn", source = "category.categoryNameEn")
     @Mapping(target = "parentCategoryId", expression = "java(category.getParentCategory() != null ? category.getParentCategory().getId() : null)")
     @Mapping(target = "id", source = "category.id")
+    @Mapping(target = "selfLink", expression = "java(CATEGORY_API + category.getId())")
     SubcategoryDTO toDTOFromCategory(Category category);
 
     @Mapping(target = "subSubCategoryNameUa", source = "category.categoryNameUa")
     @Mapping(target = "subSubCategoryNameEn", source = "category.categoryNameEn")
     @Mapping(target = "subCategoryId", source = "category.parentCategory.id")
+    @Mapping(target = "selfLink", expression = "java(CATEGORY_API + category.getId())")
     SubSubCategoryDTO toSubSubCategoryDTO(Category category);
 
     List<SubcategoryDTO> toSubcategoryDTOs(List<Category> subCategories);
@@ -42,6 +46,6 @@ public interface CategoryMapper {
     }
 
     default String createSelfLink(Category category) {
-        return category != null ? "/categories/" + category.getId() : null;
+        return category != null ? CATEGORY_API + category.getId() : null; // Оновлено для консистентності
     }
 }
