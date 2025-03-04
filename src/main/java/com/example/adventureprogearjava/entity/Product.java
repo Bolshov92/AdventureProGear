@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -45,21 +46,21 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     Gender gender;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category", nullable = false)
     Category category;
 
     @OneToMany(mappedBy = "product")
     List<OrdersList> ordersLists;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    List<ProductAttribute> attributes;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    Set<ProductAttribute> attributes;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    List<ProductContent> contents;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    Set<ProductContent> contents;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductCharacteristic> productCharacteristics;
+    private Set<ProductCharacteristic> productCharacteristics;
 
 
 }

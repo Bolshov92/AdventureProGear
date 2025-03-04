@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface SectionMapper {
-    String api = "https://adventure-production.up.railway.app/api/public/sections";
-    String categoriesApi = "https://adventure-production.up.railway.app/api/public/categories/";
+    String api = "https://adventure-production-f742.up.railway.app/api/public/sections";
+    String categoriesApi = "https://adventure-production-f742.up.railway.app/api/public/categories/";
 
     @Mapping(target = "selfLink", source = "section.id", qualifiedByName = "idToLink")
     @Mapping(target = "categoryCreationLink", source = "section.id", qualifiedByName = "idToCategoryLink")

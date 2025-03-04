@@ -1,7 +1,7 @@
 package com.example.adventureprogearjava.services.impl;
 
-import com.example.adventureprogearjava.dto.CategoryDTO;
 import com.example.adventureprogearjava.dto.ProductDTO;
+import com.example.adventureprogearjava.entity.Product;
 import com.example.adventureprogearjava.entity.enums.Gender;
 import com.example.adventureprogearjava.mapper.ProductMapper;
 import com.example.adventureprogearjava.repositories.CategoryRepository;
@@ -28,7 +28,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     ProductRepository productRepo;
 
-    ProductMapper mapper;
+    ProductMapper productMapper;
 
     @Autowired
     CRUDService<ProductDTO> productCRUDService;
@@ -43,7 +43,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Getting products by name");
         return productRepo.findByProductName(productName)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -53,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
         String upperGender = gender.toUpperCase();
         return productRepo.findByGender(upperGender)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -62,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Getting products by category");
         return productRepo.findByCategory(category)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -71,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Getting products by category and gender");
         return productRepo.findByCategoryAndGender(category, gender)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Getting products by price");
         return productRepo.findByBasePriceBetween(priceFrom, priceTo)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -90,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.findByBasePriceBetween(priceFrom, priceTo)
                 .stream()
                 .filter(product -> product.getGender().equals(Gender.valueOf(gender)))
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepo.findByBasePriceBetween(priceFrom, priceTo)
                 .stream()
                 .filter(product -> product.getCategory().getCategoryNameEn().equals(category))
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -111,7 +111,7 @@ public class ProductServiceImpl implements ProductService {
                 .stream()
                 .filter(product -> product.getCategory().getCategoryNameEn().equals(category))
                 .filter(product -> product.getGender().equals(Gender.valueOf(gender)))
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -120,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Getting products with price up to {}", priceTo);
         return productRepo.findByBasePriceLessThanEqual(priceTo)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -129,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Getting products with price from {}", priceFrom);
         return productRepo.findByBasePriceGreaterThanEqual(priceFrom)
                 .stream()
-                .map(mapper::toDto)
+                .map(productMapper::toDto)
                 .toList();
     }
 
@@ -140,31 +140,9 @@ public class ProductServiceImpl implements ProductService {
         Pageable pageable = PageRequest.of(page, size);
         Long categoryId = (category != null) ? Long.valueOf(category) : null;
 
-        // Виконання SQL-запиту
-        Page<Object[]> results = productRepository.findByFilters(categoryId, priceFrom, priceTo, gender, pageable);
-
-        // Мапимо результати у ProductDTO
-        Page<ProductDTO> products = results.map(row -> ProductDTO.builder()
-                .productId(((Number) row[0]).longValue())  // productId
-                .productNameUa((String) row[1])  // productNameUa
-                .productNameEn((String) row[2])  // productNameEn
-                .descriptionUa((String) row[3])  // descriptionUa
-                .descriptionEn((String) row[4])  // descriptionEn
-                .basePrice(((Number) row[5]).longValue())  // basePrice
-                .gender(Gender.valueOf((String) row[6]))  // gender
-                .averageRating(((Number) row[7]).doubleValue())  // averageRating
-                .reviewCount(((Number) row[8]).intValue())  // reviewCount
-                .category(CategoryDTO.builder()
-                        .id(((Number) row[9]).longValue())  // categoryId
-                        .categoryNameEn((String) row[10])  // categoryNameEn
-                        .categoryNameUa((String) row[11])  // categoryNameUa
-                        .build())
-                .selfLink("https://adventure-production.up.railway.app/api/public/products/" + ((Number) row[0]).longValue())
-                .build());
-
-        return products;
+        Page<Product> productPage = productRepository.findByFilters(categoryId, priceFrom, priceTo, gender, pageable);
+        return productPage.map(productMapper::toDto);
     }
-
 
     @Override
     public Page<ProductDTO> getProductsByAdvancedFilters(Long categoryId, Long subcategoryId, Long priceFrom, Long priceTo, String gender, int page, int size) {
@@ -174,27 +152,8 @@ public class ProductServiceImpl implements ProductService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Object[]> results = productRepository.findByFilters(categoryId, priceFrom, priceTo, gender, pageable);
-
-        Page<ProductDTO> products = results.map(row -> ProductDTO.builder()
-                .productId(((Number) row[0]).longValue())  // productId
-                .productNameUa((String) row[1])  // productNameUa
-                .productNameEn((String) row[2])  // productNameEn
-                .descriptionUa((String) row[3])  // descriptionUa
-                .descriptionEn((String) row[4])  // descriptionEn
-                .basePrice(((Number) row[5]).longValue())  // basePrice
-                .gender(Gender.valueOf((String) row[6]))  // gender
-                .averageRating(((Number) row[7]).doubleValue())  // averageRating
-                .reviewCount(((Number) row[8]).intValue())  // reviewCount
-                .category(CategoryDTO.builder()
-                        .id(((Number) row[9]).longValue())  // categoryId
-                        .categoryNameEn((String) row[10])  // categoryNameEn
-                        .categoryNameUa((String) row[11])  // categoryNameUa
-                        .build())
-                .selfLink("https://adventure-production.up.railway.app/api/public/products/" + ((Number) row[0]).longValue())
-                .build());
-
-        return products;
+        Page<Product> productPage = productRepository.findByAdvancedFilters(categoryId, subcategoryId, priceFrom, priceTo, gender, pageable);
+        return productPage.map(productMapper::toDto);
     }
 
 
